@@ -7,7 +7,6 @@ drop table monitors;
 drop table generatesbedbill;
 drop table generatesoperationbill;
 drop table has_bill;
-drop table schedules;
 drop table has_dayschedule;
 drop table operation;
 drop table appointment;
@@ -119,21 +118,6 @@ create table has_dayschedule(
 	foreign key(userid)
 		references users
 		on delete cascade);
-
-create table schedules(
-	activityid int not null,
-	patientid int not null,
-	doctorid int not null,
-	receptionistid int not null,
-	userid int not null,
-	day date not null,
-	primary key(activityid, patientid, doctorid, receptionistid, userid, day),
-	foreign key(activityid, patientid, doctorid)
-		references has_activity,
-	foreign key(receptionistid)
-		references receptionist,
-	foreign key(userid, day)
-		references has_dayschedule);
 
 create table has_bill(
 	patientid int not null,
@@ -516,68 +500,6 @@ values(58302157, '20161021', '08:00:00', '18:00:00');
 
 insert into has_dayschedule
 values(49193857, '20161021', '08:00:00', '18:00:00');
-
-
-
-insert into schedules
-values(511, 54839217, 18392183, 68965438, 54839217, '20161016');
-
-insert into schedules
-values(591, 54921583, 84910375, 48372917, 54921583, '20161020');
-
-insert into schedules
-values(596, 38993158, 38103827, 43817392, 38993158, '20161019');
-
-insert into schedules
-values(574, 43219832, 47583921, 47381037, 43219832, '20161017');
-
-insert into schedules
-values(518, 58302157, 49193857, 38173921, 58302157, '20161021');
-
-insert into schedules
-values(511, 54839217, 18392183, 68965438, 18392183, '20161016');
-
-insert into schedules
-values(591, 54921583, 84910375, 48372917, 84910375, '20161020');
-
-insert into schedules
-values(596, 38993158, 38103827, 43817392, 38103827, '20161019');
-
-insert into schedules
-values(574, 43219832, 47583921, 47381037, 47583921, '20161017');
-
-insert into schedules
-values(518, 58302157, 49193857, 38173921, 49193857, '20161021');
-
-insert into schedules
-values(611, 54839217, 18392183, 68965438, 54839217, '20161016');
-
-insert into schedules
-values(691, 54921583, 84910375, 48372917, 54921583, '20161020');
-
-insert into schedules
-values(696, 38993158, 38103827, 43817392, 38993158, '20161019');
-
-insert into schedules
-values(674, 43219832, 47583921, 47381037, 43219832, '20161017');
-
-insert into schedules
-values(618, 58302157, 49193857, 38173921, 58302157, '20161021');
-
-insert into schedules
-values(611, 54839217, 18392183, 68965438, 18392183, '20161016');
-
-insert into schedules
-values(691, 54921583, 84910375, 48372917, 84910375, '20161020');
-
-insert into schedules
-values(696, 38993158, 38103827, 43817392, 38103827, '20161019');
-
-insert into schedules
-values(674, 43219832, 47583921, 47381037, 47583921, '20161017');
-
-insert into schedules
-values(618, 58302157, 49193857, 38173921, 49193857, '20161021');
 
 
 
