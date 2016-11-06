@@ -19,6 +19,63 @@ drop table doctor;
 drop table patient;
 drop table users;
 
+drop sequence seq_userid;
+drop sequence seq_bedid;
+drop sequence seq_activityid;
+drop sequence seq_billid;
+drop sequence seq_diagnosisid;
+drop sequence seq_ailmentid;
+drop sequence seq_prescriptionid;
+drop sequence seq_noteid;
+
+CREATE SEQUENCE seq_userid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+CREATE SEQUENCE seq_bedid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+CREATE SEQUENCE seq_activityid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+CREATE SEQUENCE seq_billid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+CREATE SEQUENCE seq_diagnosisid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+CREATE SEQUENCE seq_ailmentid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+CREATE SEQUENCE seq_prescriptionid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+CREATE SEQUENCE seq_noteid
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
 create table users
 	(userid int not null,
 	username varchar(30) not null,
@@ -162,6 +219,7 @@ create table generatesbedbill(
 create table monitors(
 	patientid int not null,
 	nurseid int not null,
+	notes varchar(2000) null,
 	primary key(patientid, nurseid),
 	foreign key(patientid)
 		references patient,
@@ -555,19 +613,19 @@ values(58302157, 5, 5, 38173921);
 
 
 insert into monitors
-values(54839217, 49103857);
+values(54839217, 49103857, null);
 
 insert into monitors
-values(54921583, 18392058);
+values(54921583, 18392058, null);
 
 insert into monitors
-values(38993158, 18385093);
+values(38993158, 18385093, null);
 
 insert into monitors
-values(43219832, 48217282);
+values(43219832, 48217282, null);
 
 insert into monitors
-values(58302157, 12938183);
+values(58302157, 12938183, null);
 
 
 
