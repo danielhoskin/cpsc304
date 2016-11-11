@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class HelloWorldSwing {
+public class LoginFrame {
 
     private static final int WIDTH = 300;
     private static final int HEIGHT = 150;
@@ -20,7 +20,7 @@ public class HelloWorldSwing {
 
     /*
     // Helper: Work in progress. 
-    public HelloWorldSwing(){
+    public LoginFrame(){
         JFrame frame = new JFrame("Harambe Inc.");
         frame.setSize(WIDTH, HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
