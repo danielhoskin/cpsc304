@@ -10,13 +10,6 @@ public class Doctor extends Users implements Table {
     private String doctorid;
 
     @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        primarykey.add("doctorid");
-        return primarykey;
-    }
-
-    @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> userAttributes = super.getAttributes();
         userAttributes.remove(new Pair<>(AttributeType.STRING, "userid"));
@@ -26,6 +19,13 @@ public class Doctor extends Users implements Table {
         newList.addAll(userAttributes);
         newList.addAll(patientAttributes);
         return newList;
+    }
+
+    @Override
+    public List<String> primaryKey() {
+        List<String> primarykey = new ArrayList<>();
+        primarykey.add("doctorid");
+        return primarykey;
     }
 
     public String getDoctorid() {
