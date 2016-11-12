@@ -9,6 +9,11 @@ import java.util.List;
 public class Receptionist extends Users implements Table {
     private String receptionistid;
 
+    public Receptionist(int userid, String username, String password, String name, String phonenumber, String receptionistid) {
+        super(userid, username, password, name, phonenumber);
+        this.receptionistid = receptionistid;
+    }
+
     @Override
     public List<String> primaryKey() {
         List<String> primarykey = new ArrayList<>();

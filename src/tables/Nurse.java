@@ -9,6 +9,11 @@ import java.util.List;
 public class Nurse extends Users implements Table {
     private String nurseid;
 
+    public Nurse(int userid, String username, String password, String name, String phonenumber, String nurseid) {
+        super(userid, username, password, name, phonenumber);
+        this.nurseid = nurseid;
+    }
+
     public String getNurseid() {
         return nurseid;
     }

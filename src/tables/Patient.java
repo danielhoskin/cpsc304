@@ -8,10 +8,18 @@ import java.util.Date;
 import java.util.List;
 
 public class Patient extends Users implements Table {
-    private String patientid;
+    private int patientid;
     private Date dateofbirth;
     private String sex;
     private String medicalhistory;
+
+    public Patient( String username, String password, String name, String phonenumber, int patientid, Date dateofbirth, String sex, String medicalhistory) {
+        super(patientid, username, password, name, phonenumber);
+        this.patientid = patientid;
+        this.dateofbirth = dateofbirth;
+        this.sex = sex;
+        this.medicalhistory = medicalhistory;
+    }
 
     @Override
     public List<String> primaryKey() {
@@ -35,11 +43,11 @@ public class Patient extends Users implements Table {
         return newList;
     }
 
-    public String getPatientid() {
+    public int getPatientid() {
         return patientid;
     }
 
-    public void setPatientid(String patientid) {
+    public void setPatientid(int patientid) {
         this.patientid = patientid;
     }
 

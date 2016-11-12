@@ -13,6 +13,14 @@ public class Users implements Table {
     private String name;
     private String phonenumber;
 
+    public Users(int userid, String username, String password, String name, String phonenumber) {
+        this.userid = userid;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.phonenumber = phonenumber;
+    }
+
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> userAttributes = new ArrayList<>();
