@@ -146,20 +146,9 @@ public class Database {
 
     public List<Integer> monitoredByEveryNurse() throws SQLException {
         Statement stmt = connection.createStatement();
-        String query = "";
-        ResultSet rs = stmt.executeQuery(query);
-
-        List<Integer> patients = new ArrayList<>();
-
-        while (rs.next()) {
-
-        }
-        return patients;
-    }
-
-    public List<Integer> paidTheHighestBill() throws SQLException {
-        Statement stmt = connection.createStatement();
-        String query = "select b.patientid from has_bill b where b.amountdue >= (select max(amountdue) from has_bill)";
+        String query = "select p.patientid from patient p where not exists (" +
+                "(select nurseid from nurse) minus " +
+                "(select m.nurseid from monitors m where m.patientid = p.patientid))";
         ResultSet rs = stmt.executeQuery(query);
 
         List<Integer> patients = new ArrayList<>();
@@ -167,6 +156,50 @@ public class Database {
         while (rs.next()) {
             pid = rs.getInt("patientid");
             patients.add(pid);
+        }
+        return patients;
+    }
+
+    public boolean addMonitors(int patientid, int nurseid, String notes) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query;
+        if (notes.isEmpty()) {
+           query =  "insert into monitors values(" + patientid + ", " + nurseid + ", null)";
+        } else {
+           query = "insert into monitors values(" + patientid + ", " + nurseid + ", '" + notes + "')";
+        }
+        int result = stmt.executeUpdate(query);
+        return result == 1;
+    }
+
+    public List<Pair<Integer, Float>> paidTheHighestBill() throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select b.patientid, amountdue from has_bill b where b.amountdue >= (select max(amountdue) from has_bill)";
+        ResultSet rs = stmt.executeQuery(query);
+
+        List<Pair<Integer, Float>> patients = new ArrayList<>();
+        Integer pid;
+        Float ad;
+        while (rs.next()) {
+            pid = rs.getInt("patientid");
+            ad = rs.getFloat("amountdue");
+            patients.add(new Pair<>(pid, ad));
+        }
+        return patients;
+    }
+
+    public List<Pair<Integer, Float>> paidTheLowestBill() throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select b.patientid, b.amountdue from has_bill b where b.amountdue <= (select min(amountdue) from has_bill)";
+        ResultSet rs = stmt.executeQuery(query);
+
+        List<Pair<Integer, Float>> patients = new ArrayList<>();
+        Integer pid;
+        Float ad;
+        while (rs.next()) {
+            pid = rs.getInt("patientid");
+            ad = rs.getFloat("amountdue");
+            patients.add(new Pair<>(pid, ad));
         }
         return patients;
     }
@@ -196,9 +229,17 @@ public class Database {
 
             Pair<Integer, String> pair = db.findBedLocation(43219832);
 
-            List<Integer> p = db.paidTheHighestBill();
+            List<Pair<Integer, Float>> p = db.paidTheHighestBill();
+            List<Pair<Integer, Float>> p2 = db.paidTheLowestBill();
 
             //System.out.println(db.deleteBed(10));
+
+            List<Integer> ps = db.monitoredByEveryNurse();
+            for(Integer i : ps) {
+                System.out.println(i);
+            }
+
+            //db.addMonitors(43219832, 18392058, "hello");
         } catch (SQLException e) {
             System.out.println("Message: " + e.getMessage());
             System.exit(-1);
