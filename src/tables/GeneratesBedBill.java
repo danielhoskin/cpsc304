@@ -3,12 +3,19 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GeneratesBedBill extends Has_Bill implements Table {
     private int bedid;
     private int receptionistid;
+
+    public GeneratesBedBill(int patientid, int billid, float amountdue, float amountpaid, Timestamp day, int bedid, int receptionistid) {
+        super(patientid, billid, amountdue, amountpaid, day);
+        this.bedid = bedid;
+        this.receptionistid = receptionistid;
+    }
 
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {

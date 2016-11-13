@@ -172,6 +172,13 @@ public class Database {
         return result == 1;
     }
 
+    public boolean deleteMonitors(int nurseid, int patientid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "delete from monitors m where m.nurseid = " + nurseid + " and m.patientid = " + patientid;
+        int result = stmt.executeUpdate(query);
+        return result == 1;
+    }
+
     public List<Monitors> getMonitors(int nurseid) throws SQLException {
         Statement stmt = connection.createStatement();
         String query = "select * from monitors m where m.nurseid = " + nurseid;
@@ -413,6 +420,13 @@ public class Database {
         return diagnosises;
     }
 
+    public boolean deleteDiagnosis(int diagnosisid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "delete from has_diagnosis where diagnosisid = " + diagnosisid;
+        int result = stmt.executeUpdate(query);
+        return result == 1;
+    }
+
    public boolean isPatient(int userid) throws SQLException {
        Statement stmt = connection.createStatement();
        String query = "select patientid from patient";
@@ -474,11 +488,6 @@ public class Database {
     }
 
     // TODO:
-    public boolean deletePatient(int patientid) throws SQLException {
-        return false;
-    }
-
-    // TODO:
     public boolean addActivity(int patientid, int doctorid, int nurseid, Timestamp starttime, Timestamp endtime) throws SQLException {
         return false;
     }
@@ -523,6 +532,57 @@ public class Database {
             activities.add(new HasActivty(aid, patientId, did, nid, st, et));
         }
         return activities;
+    }
+
+
+    public List<Has_Bill> getBills(int patientid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from has_bill where patientid = " + patientid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        int bid;
+        float ad;
+        float ap;
+        Timestamp d;
+        List<Has_Bill> bills = new ArrayList<>();
+
+        while (rs.next()) {
+            bid = rs.getInt("billid");
+            ad = rs.getFloat("amountdue");
+            ap = rs.getFloat("amountpaid");
+            d = rs.getTimestamp("day");
+            bills.add(new Has_Bill(patientid, bid, ad, ap, d));
+        }
+        return bills;
+    }
+
+    public boolean isOperationBill(int billid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from generatesoperationbill  where billid = " + billid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        if (rs.next()){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isBedBill(int billid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from generatesbedbill  where billid = " + billid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        if (rs.next()){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean updateAmountPaid(int billid, float amountpaid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "update has_bill set amountpaid = " + amountpaid + " where billid = " + billid;
+        int result = stmt.executeUpdate(query);
+        return result == 1;
     }
 
     public static void main(String[] args) {

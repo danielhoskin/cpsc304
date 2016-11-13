@@ -3,6 +3,8 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,15 @@ public class Has_Bill implements Table {
     private int billid;
     private float amountdue;
     private float amountpaid;
-    private String day;
+    private Timestamp day;
+
+    public Has_Bill(int patientid, int billid, float amountdue, float amountpaid, Timestamp day) {
+        this.patientid = patientid;
+        this.billid = billid;
+        this.amountdue = amountdue;
+        this.amountpaid = amountpaid;
+        this.day = day;
+    }
 
     public int getPatientid() {
         return patientid;
@@ -45,11 +55,11 @@ public class Has_Bill implements Table {
         this.amountpaid = amountpaid;
     }
 
-    public String getDay() {
+    public Timestamp getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(Timestamp day) {
         this.day = day;
     }
 

@@ -3,6 +3,7 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,13 @@ public class GeneratesOperationBill extends Has_Bill implements Table {
     private int activityid;
     private int doctorid;
     private int receptionistid;
+
+    public GeneratesOperationBill(int patientid, int billid, float amountdue, float amountpaid, Timestamp day, int activityid, int doctorid, int receptionistid) {
+        super(patientid, billid, amountdue, amountpaid, day);
+        this.activityid = activityid;
+        this.doctorid = doctorid;
+        this.receptionistid = receptionistid;
+    }
 
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
