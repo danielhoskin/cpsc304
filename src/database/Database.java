@@ -3,6 +3,7 @@ package database;
 import main.Pair;
 import tables.*;
 
+import javax.print.Doc;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -585,6 +586,155 @@ public class Database {
         return result == 1;
     }
 
+    public Patient getPatient(int userid) throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from patient, users where patient.patientid = users.userid and patient.patientid = " + userid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        String un;
+        String pw;
+        String pn;
+        String phn;
+        Date db;
+        String sx;
+        String mh;
+
+        Patient patient = null;
+
+        while (rs.next()) {
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            pn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            db = rs.getDate("dateofbirth");
+            r = rs.getCharacterStream("sex");
+            br = new BufferedReader(r);
+            rlst = new StringBuilder();
+
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                sx = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            mh = rs.getString("medicalhistory");
+            patient = (new Patient(un, pw, pn, phn, userid, db, sx, mh));
+        }
+        return patient;
+    }
+
+    public Doctor getDoctor(int userid) throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from doctor, users where doctorid = userid and doctorid = " + userid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        String un;
+        String pw;
+        String dn;
+        String phn;
+
+        Doctor doctor = null;
+
+        while (rs.next()) {
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            dn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            doctor = new Doctor(un, pw, dn, phn, userid);
+        }
+        return doctor;
+    }
+
+    public Nurse getNurse(int userid) throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from nurse, users where nurseid = userid and nurseid = " + userid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        String un;
+        String pw;
+        String nn;
+        String phn;
+
+        Nurse nurse = null;
+
+        while (rs.next()) {
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            nn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            nurse = new Nurse(un, pw, nn, phn, userid);
+        }
+        return nurse;
+    }
+
+    public Receptionist getReceptionist(int userid) throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from receptionist, users where receptionistid = userid and receptionistid = " + userid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        String un;
+        String pw;
+        String nn;
+        String phn;
+
+        Receptionist receptionist = null;
+
+        while (rs.next()) {
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            nn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            receptionist = new Receptionist(un, pw, nn, phn, userid);
+        }
+        return receptionist;
+    }
+
     public static void main(String[] args) {
         Database db = Database.getInstance();
         try {
@@ -620,6 +770,10 @@ public class Database {
             }
             db.getMonitors(12938183);
             db.getDiagnosises(18392183);
+            db.getPatient(38993158);
+            db.getDoctor(18392183);
+            db.getNurse(12938183);
+            db.getReceptionist(47381037);
         } catch (SQLException e) {
             System.out.println("Message: " + e.getMessage());
             System.exit(-1);
