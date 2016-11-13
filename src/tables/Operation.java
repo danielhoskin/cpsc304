@@ -10,6 +10,12 @@ public class Operation extends HasActivty implements Table{
     private String type;
     private double cost;
 
+    public Operation(int activityid, int patientid, int doctorid, int nurseid, String starttime, String endtime, String type, double cost) {
+        super(activityid, patientid, doctorid, nurseid, starttime, endtime);
+        this.type = type;
+        this.cost = cost;
+    }
+
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> userAttributes = super.getAttributes();

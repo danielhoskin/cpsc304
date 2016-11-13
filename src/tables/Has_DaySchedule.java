@@ -9,15 +9,22 @@ import java.util.List;
 
 public class Has_DaySchedule implements Table {
     private int userid;
-    private Date date;
+    private Date day;
     private String availablefrom;
     private String availableto;
+
+    public Has_DaySchedule(int userid, Date day, String availablefrom, String availableto) {
+        this.userid = userid;
+        this.day = day;
+        this.availablefrom = availablefrom;
+        this.availableto = availableto;
+    }
 
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> dayscheduleAttributes = new ArrayList<>();
         dayscheduleAttributes.add(new Pair<>(AttributeType.INT, "userid"));
-        dayscheduleAttributes.add(new Pair<>(AttributeType.DATE, "date"));
+        dayscheduleAttributes.add(new Pair<>(AttributeType.DATE, "day"));
         dayscheduleAttributes.add(new Pair<>(AttributeType.STRING, "availablefrom"));
         dayscheduleAttributes.add(new Pair<>(AttributeType.STRING, "availableto"));
         return dayscheduleAttributes;
@@ -27,7 +34,7 @@ public class Has_DaySchedule implements Table {
     public List<String> primaryKey() {
         List<String> primarykey = new ArrayList<>();
         primarykey.add("userid");
-        primarykey.add("date");
+        primarykey.add("day");
         return primarykey;
     }
 
@@ -39,12 +46,12 @@ public class Has_DaySchedule implements Table {
         this.userid = userid;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getDay() {
+        return day;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDay(Date day) {
+        this.day = day;
     }
 
     public String getAvailablefrom() {

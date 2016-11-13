@@ -1,6 +1,8 @@
 package database;
 
 import main.Pair;
+import tables.HasActivty;
+import tables.Has_DaySchedule;
 import tables.Patient;
 
 import java.io.BufferedReader;
@@ -221,6 +223,48 @@ public class Database {
         return false;
     }
 
+    public List<Has_DaySchedule> getDaySchedule(int userId) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from has_dayschedule where userid = " + userId;
+        ResultSet rs = stmt.executeQuery(query);
+
+        List<Has_DaySchedule> schedules = new ArrayList<>();
+        Date dt;
+        String af;
+        String at;
+
+        while (rs.next()) {
+            dt = rs.getDate("day");
+            af = rs.getString("availablefrom");
+            at = rs.getString("availableto");
+            schedules.add(new Has_DaySchedule(userId, dt, af, at));
+        }
+        return schedules;
+    }
+
+    public List<HasActivty> getPatientActivities(int patientId) throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from has_activity where patientid = " + patientId;
+        ResultSet rs = stmt.executeQuery(query);
+
+        List<HasActivty> activities = new ArrayList<>();
+        int aid;
+        int did;
+        int nid;
+        String st;
+        String et;
+
+        while (rs.next()) {
+            aid = rs.getInt("activityid");
+            did = rs.getInt("doctorid");
+            nid = rs.getInt("nurseid");
+            st = rs.getString("starttime");
+            et = rs.getString("endtime");
+            activities.add(new HasActivty(aid, patientId, did, nid, st, et));
+        }
+        return activities;
+    }
+
     public static void main(String[] args) {
         Database db = Database.getInstance();
         try {
@@ -236,10 +280,12 @@ public class Database {
 
             List<Integer> ps = db.monitoredByEveryNurse();
             for(Integer i : ps) {
-                System.out.println(i);
+                //System.out.println(i);
             }
 
             //db.addMonitors(43219832, 18392058, "hello");
+            db.getDaySchedule(43219832);
+            db.getPatientActivities(43219832);
         } catch (SQLException e) {
             System.out.println("Message: " + e.getMessage());
             System.exit(-1);

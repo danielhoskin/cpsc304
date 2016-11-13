@@ -14,6 +14,14 @@ public class HasActivty implements Table {
     private String starttime;
     private String endtime;
 
+    public HasActivty(int activityid, int patientid, int doctorid, int nurseid, String starttime, String endtime) {
+        this.activityid = activityid;
+        this.patientid = patientid;
+        this.doctorid = doctorid;
+        this.nurseid = nurseid;
+        this.starttime = starttime;
+        this.endtime = endtime;
+    }
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> hasactivityAttributes = new ArrayList<>();

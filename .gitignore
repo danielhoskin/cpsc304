@@ -1,0 +1,6 @@
+# intellij files
+*.idea
+*.iml
+
+# java output
+bin/
