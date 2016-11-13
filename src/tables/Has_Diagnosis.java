@@ -12,6 +12,13 @@ public class Has_Diagnosis implements Table{
     private int doctorid;
     private int diagnosisid;
 
+    public Has_Diagnosis(int activityid, int patientid, int doctorid, int diagnosisid) {
+        this.activityid = activityid;
+        this.patientid = patientid;
+        this.doctorid = doctorid;
+        this.diagnosisid = diagnosisid;
+    }
+
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> diagnosisAttributes = new ArrayList<>();

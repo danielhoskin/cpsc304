@@ -11,6 +11,12 @@ public class Monitors implements Table{
     private int nurseid;
     private String notes;
 
+    public Monitors(int patientid, int nurseid, String notes) {
+        this.patientid = patientid;
+        this.nurseid = nurseid;
+        this.notes = notes;
+    }
+
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> monitorsAttributes = new ArrayList<>();

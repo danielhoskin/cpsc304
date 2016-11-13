@@ -1,9 +1,7 @@
 package database;
 
 import main.Pair;
-import tables.HasActivty;
-import tables.Has_DaySchedule;
-import tables.Patient;
+import tables.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -174,6 +172,23 @@ public class Database {
         return result == 1;
     }
 
+    public List<Monitors> getMonitors(int nurseid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from monitors m where m.nurseid = " + nurseid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        List<Monitors> monitors = new ArrayList<>();
+        int pid;
+        String notes;
+
+        while (rs.next()) {
+            pid = rs.getInt("patientid");
+            notes = rs.getString("notes");
+            monitors.add(new Monitors(pid, nurseid, notes));
+        }
+        return monitors;
+    }
+
     public List<Pair<Integer, Float>> paidTheHighestBill() throws SQLException {
         Statement stmt = connection.createStatement();
         String query = "select b.patientid, amountdue from has_bill b where b.amountdue >= (select max(amountdue) from has_bill)";
@@ -208,9 +223,254 @@ public class Database {
 
     public boolean deleteBed(int bedid) throws SQLException {
         Statement stmt = connection.createStatement();
-        String query = "delete from bed where bedid = " + bedid;
-        int result = stmt.executeUpdate(query);
-        return result == 1;
+        Statement check = connection.createStatement();
+        String cond = "select bedid from assignedto where bedid = " + bedid;
+        ResultSet rs = check.executeQuery(cond);
+
+        if (rs.next()) {
+            return false;
+        } else {
+            String query = "delete from bed where bedid = " + bedid;
+            int result = stmt.executeUpdate(query);
+            return result == 1;
+        }
+    }
+
+    public List<Patient> getPatients() throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from patient, users where patient.patientid = users.userid";
+        ResultSet rs = stmt.executeQuery(query);
+
+        int pi;
+        String un;
+        String pw;
+        String pn;
+        String phn;
+        Date db;
+        String sx;
+        String mh;
+
+        List<Patient> patients = new ArrayList<>();
+
+        while (rs.next()) {
+            pi = rs.getInt("patientid");
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            pn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            db = rs.getDate("dateofbirth");
+            r = rs.getCharacterStream("sex");
+            br = new BufferedReader(r);
+            rlst = new StringBuilder();
+
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                sx = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            mh = rs.getString("medicalhistory");
+            patients.add(new Patient(un, pw, pn, phn, pi, db, sx, mh));
+        }
+        return patients;
+    }
+
+    public List<Doctor> getDoctors() throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from doctor, users where doctorid = userid";
+        ResultSet rs = stmt.executeQuery(query);
+
+        int di;
+        String un;
+        String pw;
+        String dn;
+        String phn;
+
+        List<Doctor> doctors = new ArrayList<>();
+
+        while (rs.next()) {
+            di = rs.getInt("doctorid");
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            dn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            doctors.add(new Doctor(un, pw, dn, phn, di));
+        }
+        return doctors;
+    }
+
+    public List<Nurse> getNurses() throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from nurse, users where nurseid = userid";
+        ResultSet rs = stmt.executeQuery(query);
+
+        int ni;
+        String un;
+        String pw;
+        String nn;
+        String phn;
+
+        List<Nurse> nurses = new ArrayList<>();
+
+        while (rs.next()) {
+            ni = rs.getInt("nurseid");
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            nn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            nurses.add(new Nurse(un, pw, nn, phn, ni));
+        }
+        return nurses;
+    }
+
+    public List<Receptionist> getReceptionists() throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from receptionist, users where receptionistid = userid";
+        ResultSet rs = stmt.executeQuery(query);
+
+        int ri;
+        String un;
+        String pw;
+        String nn;
+        String phn;
+
+        List<Receptionist> receptionists = new ArrayList<>();
+
+        while (rs.next()) {
+            ri = rs.getInt("receptionistid");
+            un = rs.getString("username");
+            pw = rs.getString("password");
+            nn = rs.getString("name");
+            Reader r = rs.getCharacterStream("phonenumber");
+            BufferedReader br = new BufferedReader(r);
+            StringBuilder rlst = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    rlst.append(line);
+                }
+                phn = rlst.toString();
+            } catch (IOException e) {
+                throw new SQLException();
+            }
+            receptionists.add(new Receptionist(un, pw, nn, phn, ri));
+        }
+        return receptionists;
+    }
+
+    public List<Has_Diagnosis> getDiagnosises(int doctorid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from has_diagnosis d where d.doctorid = " + doctorid;
+        ResultSet rs = stmt.executeQuery(query);
+
+        int aid;
+        int pid;
+        int did;
+
+        List<Has_Diagnosis> diagnosises = new ArrayList<>();
+
+        while (rs.next()) {
+            aid = rs.getInt("activityid");
+            pid = rs.getInt("patientid");
+            did = rs.getInt("diagnosisid");
+            diagnosises.add(new Has_Diagnosis(aid, pid, doctorid, did));
+        }
+        return diagnosises;
+    }
+
+   public boolean isPatient(int userid) throws SQLException {
+       Statement stmt = connection.createStatement();
+       String query = "select patientid from patient";
+       ResultSet rs = stmt.executeQuery(query);
+
+       int pid;
+       while (rs.next()) {
+           pid = rs.getInt("patientid");
+           if (pid == userid) {
+               return true;
+           }
+       }
+       return false;
+   }
+
+    public boolean isDoctor(int userid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select doctorid from doctor";
+        ResultSet rs = stmt.executeQuery(query);
+
+        int did;
+        while (rs.next()) {
+            did = rs.getInt("doctorid");
+            if (did == userid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isNurse(int userid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select nurseid from nurse";
+        ResultSet rs = stmt.executeQuery(query);
+
+        int nid;
+        while (rs.next()) {
+            nid = rs.getInt("nurseid");
+            if (nid == userid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isReceptionist(int userid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select receptionistid from receptionist";
+        ResultSet rs = stmt.executeQuery(query);
+
+        int rid;
+        while (rs.next()) {
+            rid = rs.getInt("receptionistid");
+            if (rid == userid) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // TODO:
@@ -286,6 +546,20 @@ public class Database {
             //db.addMonitors(43219832, 18392058, "hello");
             db.getDaySchedule(43219832);
             db.getPatientActivities(43219832);
+            for (Patient pat : db.getPatients()) {
+                //System.out.println(pat.getPatientid());
+            }
+            for (Doctor doc: db.getDoctors()) {
+                //System.out.println(doc.getDoctorid());
+            }
+            for (Nurse nu: db.getNurses()) {
+                //System.out.println(nu.getNurseid());
+            }
+            for (Receptionist rep: db.getReceptionists()) {
+                //System.out.println(rep.getReceptionistid());
+            }
+            db.getMonitors(12938183);
+            db.getDiagnosises(18392183);
         } catch (SQLException e) {
             System.out.println("Message: " + e.getMessage());
             System.exit(-1);

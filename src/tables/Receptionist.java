@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Receptionist extends Users implements Table {
-    private String receptionistid;
+    private int receptionistid;
 
-    public Receptionist(int userid, String username, String password, String name, String phonenumber, String receptionistid) {
-        super(userid, username, password, name, phonenumber);
+    public Receptionist(String username, String password, String name, String phonenumber, int receptionistid) {
+        super(receptionistid, username, password, name, phonenumber);
         this.receptionistid = receptionistid;
     }
 
@@ -32,10 +32,10 @@ public class Receptionist extends Users implements Table {
         return newList;
     }
 
-    public String getReceptionistid() { return receptionistid;
+    public int getReceptionistid() { return receptionistid;
     }
 
-    public void setReceptionistid(String receptionistid) {
+    public void setReceptionistid(int receptionistid) {
         this.receptionistid = receptionistid;
     }
 }

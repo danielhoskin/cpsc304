@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Doctor extends Users implements Table {
-    private String doctorid;
+    private int doctorid;
 
-    public Doctor(int userid, String username, String password, String name, String phonenumber, String doctorid) {
-        super(userid, username, password, name, phonenumber);
+    public Doctor(String username, String password, String name, String phonenumber, int doctorid) {
+        super(doctorid, username, password, name, phonenumber);
         this.doctorid = doctorid;
     }
 
@@ -20,7 +20,7 @@ public class Doctor extends Users implements Table {
         userAttributes.remove(new Pair<>(AttributeType.STRING, "userid"));
         List<Pair<AttributeType, String>> patientAttributes = new ArrayList<>();
         List<Pair<AttributeType, String>> newList = new ArrayList<>(userAttributes.size() + patientAttributes.size());
-        patientAttributes.add(new Pair<>(AttributeType.STRING, "doctorid"));
+        patientAttributes.add(new Pair<>(AttributeType.INT, "doctorid"));
         newList.addAll(userAttributes);
         newList.addAll(patientAttributes);
         return newList;
@@ -33,11 +33,11 @@ public class Doctor extends Users implements Table {
         return primarykey;
     }
 
-    public String getDoctorid() {
+    public int getDoctorid() {
         return doctorid;
     }
 
-    public void setDoctorid(String doctorid) {
+    public void setDoctorid(int doctorid) {
         this.doctorid = doctorid;
     }
 }
