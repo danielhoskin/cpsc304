@@ -9,8 +9,8 @@ import java.util.List;
 public class Has_Bill implements Table {
     private int patientid;
     private int billid;
-    private double amountdue;
-    private double amountpaid;
+    private float amountdue;
+    private float amountpaid;
     private String day;
 
     public int getPatientid() {
@@ -33,7 +33,7 @@ public class Has_Bill implements Table {
         return amountdue;
     }
 
-    public void setAmountdue(double amountdue) {
+    public void setAmountdue(float amountdue) {
         this.amountdue = amountdue;
     }
 
@@ -41,7 +41,7 @@ public class Has_Bill implements Table {
         return amountpaid;
     }
 
-    public void setAmountpaid(double amountpaid) {
+    public void setAmountpaid(float amountpaid) {
         this.amountpaid = amountpaid;
     }
 

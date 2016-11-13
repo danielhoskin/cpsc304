@@ -9,6 +9,11 @@ import java.util.List;
 public class Doctor extends Users implements Table {
     private String doctorid;
 
+    public Doctor(int userid, String username, String password, String name, String phonenumber, String doctorid) {
+        super(userid, username, password, name, phonenumber);
+        this.doctorid = doctorid;
+    }
+
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> userAttributes = super.getAttributes();
