@@ -735,6 +735,46 @@ public class Database {
         return receptionist;
     }
 
+    public Pair<Integer, Float> getDoctorWithMaximumAverageOperationCost() throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select avgBill as maxSum, doctorid from (select doctorid, avg(amountdue) as avgBill " +
+                "from has_bill h, generatesoperationbill g where g.billid = h.billid group by doctorid having avg(amountdue) > 0) " +
+                "where avgBill >= (select max(avgBill) as maxSum from (select doctorid, avg(amountdue) as avgBill from has_bill h, " +
+                "generatesoperationbill g where g.billid = h.billid group by doctorid having avg(amountdue) > 0))";
+
+        ResultSet rs = stmt.executeQuery(query);
+
+        Pair<Integer, Float> pair = null;
+        Integer did;
+        Float c;
+        while (rs.next()) {
+            did = rs.getInt("doctorid");
+            c = rs.getFloat("maxSum");
+            pair = new Pair<>(did, c);
+        }
+        return pair;
+    }
+
+    public Pair<Integer, Float> getDoctorWithMinimumAverageOperationCost() throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select avgBill as minSum, doctorid from (select doctorid, avg(amountdue) as avgBill " +
+                "from has_bill h, generatesoperationbill g where g.billid = h.billid group by doctorid having avg(amountdue) > 0) " +
+                "where avgBill <= (select min(avgBill) as minSum from (select doctorid, avg(amountdue) as avgBill from has_bill h, " +
+                "generatesoperationbill g where g.billid = h.billid group by doctorid having avg(amountdue) > 0))";
+
+        ResultSet rs = stmt.executeQuery(query);
+
+        Pair<Integer, Float> pair = null;
+        Integer did;
+        Float c;
+        while (rs.next()) {
+            did = rs.getInt("doctorid");
+            c = rs.getFloat("minSum");
+            pair = new Pair<>(did, c);
+        }
+        return pair;
+    }
+
     public static void main(String[] args) {
         Database db = Database.getInstance();
         try {
@@ -774,6 +814,8 @@ public class Database {
             db.getDoctor(18392183);
             db.getNurse(12938183);
             db.getReceptionist(47381037);
+            db.getDoctorWithMaximumAverageOperationCost();
+            db.getDoctorWithMinimumAverageOperationCost();
         } catch (SQLException e) {
             System.out.println("Message: " + e.getMessage());
             System.exit(-1);
