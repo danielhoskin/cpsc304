@@ -20,8 +20,8 @@ public class Monitors implements Table{
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> monitorsAttributes = new ArrayList<>();
-        monitorsAttributes.add(new Pair<>(AttributeType.STRING, "patientid"));
-        monitorsAttributes.add(new Pair<>(AttributeType.STRING, "nurseid"));
+        monitorsAttributes.add(new Pair<>(AttributeType.INT, "patientid"));
+        monitorsAttributes.add(new Pair<>(AttributeType.INT, "nurseid"));
         monitorsAttributes.add(new Pair<>(AttributeType.STRING, "notes"));
         return monitorsAttributes;
     }

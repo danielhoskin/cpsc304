@@ -70,7 +70,7 @@ public class Has_Bill implements Table {
         billAttributes.add(new Pair<>(AttributeType.INT, "billid"));
         billAttributes.add(new Pair<>(AttributeType.FLOAT, "amountdue"));
         billAttributes.add(new Pair<>(AttributeType.FLOAT, "amountpaid"));
-        billAttributes.add(new Pair<>(AttributeType.STRING, "day"));
+        billAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "day"));
         return billAttributes;
     }
 

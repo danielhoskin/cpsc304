@@ -131,8 +131,8 @@ create table bed(
 create table assignedto(
 	patientid int not null,
 	bedid int not null,
-	admissiondate timestamp default systimestamp not null,		#changed datatype
-	releasedate timestamp null,									#changed datatype
+	admissiondate timestamp default systimestamp not null,		--changed datatype
+	releasedate timestamp null,									--changed datatype
 	primary key(patientid, bedid),
 	foreign key(patientid)
 		references patient,
@@ -144,8 +144,8 @@ create table has_activity(
 	patientid int not null,
 	doctorid int not null,
 	nurseid int null,
-	starttime timestamp not null,		#changed datatype
-	endtime timestamp not null,			#changed datatype
+	starttime timestamp not null,		--changed datatype
+	endtime timestamp not null,			--changed datatype
 	primary key(activityid, patientid, doctorid),
 	foreign key(patientid)
 		references patient,
@@ -175,10 +175,10 @@ create table operation(
 
 create table has_dayschedule(
 	userid int not null,
-	dayid int not null,					#changed datatype | 1 = sunday, 7 = saturday
-	timefrom timestamp default '00-00-00 09:00:00.000000' null,			#changed datatype
-	timeto timestamp default '00-00-00 17:00:00.000000' null,			#changed datatype
-	available boolean not null,		#added variable
+	dayid int not null,					--changed datatype | 1 = sunday, 7 = saturday
+	timefrom timestamp null,			--changed datatype
+	timeto timestamp null,			--changed datatype
+	available boolean not null,		--added variable
 	primary key(userid, dayid),
 	foreign key(userid)
 		references users
@@ -189,7 +189,7 @@ create table has_bill(
 	billid int not null,
 	amountdue float null,
 	amountpaid float null,
-	day timestamp default systimestamp null,				#changed datatype, added default value
+	day timestamp default systimestamp null,				--changed datatype, added default value
 	primary key(patientid, billid),
 	foreign key(patientid)
 		references patient

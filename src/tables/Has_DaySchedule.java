@@ -3,30 +3,30 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Has_DaySchedule implements Table {
     private int userid;
-    private Date day;
-    private String availablefrom;
-    private String availableto;
+    private int dayid;
+    private Timestamp timefrom;
+    private Timestamp timeto;
 
-    public Has_DaySchedule(int userid, Date day, String availablefrom, String availableto) {
+    public Has_DaySchedule(int userid, int dayid, Timestamp timefrom, Timestamp timeto) {
         this.userid = userid;
-        this.day = day;
-        this.availablefrom = availablefrom;
-        this.availableto = availableto;
+        this.dayid = dayid;
+        this.timefrom = timefrom;
+        this.timeto = timeto;
     }
 
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> dayscheduleAttributes = new ArrayList<>();
         dayscheduleAttributes.add(new Pair<>(AttributeType.INT, "userid"));
-        dayscheduleAttributes.add(new Pair<>(AttributeType.DATE, "day"));
-        dayscheduleAttributes.add(new Pair<>(AttributeType.STRING, "availablefrom"));
-        dayscheduleAttributes.add(new Pair<>(AttributeType.STRING, "availableto"));
+        dayscheduleAttributes.add(new Pair<>(AttributeType.INT, "dayid"));
+        dayscheduleAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "timefrom"));
+        dayscheduleAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "timeto"));
         return dayscheduleAttributes;
     }
 
@@ -34,7 +34,7 @@ public class Has_DaySchedule implements Table {
     public List<String> primaryKey() {
         List<String> primarykey = new ArrayList<>();
         primarykey.add("userid");
-        primarykey.add("day");
+        primarykey.add("dayid");
         return primarykey;
     }
 
@@ -46,27 +46,27 @@ public class Has_DaySchedule implements Table {
         this.userid = userid;
     }
 
-    public Date getDay() {
-        return day;
+    public int getDayid() {
+        return dayid;
     }
 
-    public void setDay(Date day) {
-        this.day = day;
+    public void setDayid(int dayid) {
+        this.dayid = dayid;
     }
 
-    public String getAvailablefrom() {
-        return availablefrom;
+    public Timestamp getTimefrom() {
+        return timefrom;
     }
 
-    public void setAvailablefrom(String availablefrom) {
-        this.availablefrom = availablefrom;
+    public void setTimefrom(Timestamp timefrom) {
+        this.timefrom = timefrom;
     }
 
-    public String getAvailableto() {
-        return availableto;
+    public Timestamp getTimeto() {
+        return timeto;
     }
 
-    public void setAvailableto(String availableto) {
-        this.availableto = availableto;
+    public void setTimeto(Timestamp timeto) {
+        this.timeto = timeto;
     }
 }

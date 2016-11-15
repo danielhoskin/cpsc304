@@ -80,7 +80,6 @@ public class Has_Prescription implements Table{
         primarykey.add("activityid");
         primarykey.add("patientid");
         primarykey.add("doctorid");
-
         primarykey.add("diagnosisid");
         primarykey.add("prescriptionid");
         return primarykey;

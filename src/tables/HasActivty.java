@@ -3,6 +3,7 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +12,10 @@ public class HasActivty implements Table {
     private int patientid;
     private int doctorid;
     private int nurseid;
-    private String starttime;
-    private String endtime;
+    private Timestamp starttime;
+    private Timestamp endtime;
 
-    public HasActivty(int activityid, int patientid, int doctorid, int nurseid, String starttime, String endtime) {
+    public HasActivty(int activityid, int patientid, int doctorid, int nurseid, Timestamp starttime, Timestamp endtime) {
         this.activityid = activityid;
         this.patientid = patientid;
         this.doctorid = doctorid;
@@ -29,8 +30,8 @@ public class HasActivty implements Table {
         hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.INT, "patientid"));
         hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.INT, "doctorid"));
         hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.INT, "nurseid"));
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.STRING, "starttime"));
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.STRING, "endtime"));
+        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.TIMESTAMP, "starttime"));
+        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.TIMESTAMP, "endtime"));
         return hasactivityAttributes;
     }
 
@@ -75,19 +76,19 @@ public class HasActivty implements Table {
         this.nurseid = nurseid;
     }
 
-    public String getStarttime() {
+    public Timestamp getStarttime() {
         return starttime;
     }
 
-    public void setStarttime(String starttime) {
+    public void setStarttime(Timestamp starttime) {
         this.starttime = starttime;
     }
 
-    public String getEndtime() {
+    public Timestamp getEndtime() {
         return endtime;
     }
 
-    public void setEndtime(String endtime) {
+    public void setEndtime(Timestamp endtime) {
         this.endtime = endtime;
     }
 }

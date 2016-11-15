@@ -3,14 +3,15 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Operation extends HasActivty implements Table{
     private String type;
-    private double cost;
+    private float cost;
 
-    public Operation(int activityid, int patientid, int doctorid, int nurseid, String starttime, String endtime, String type, double cost) {
+    public Operation(int activityid, int patientid, int doctorid, int nurseid, Timestamp starttime, Timestamp endtime, String type, float cost) {
         super(activityid, patientid, doctorid, nurseid, starttime, endtime);
         this.type = type;
         this.cost = cost;
@@ -22,7 +23,7 @@ public class Operation extends HasActivty implements Table{
         List<Pair<AttributeType, String>> patientAttributes = new ArrayList<>();
         List<Pair<AttributeType, String>> newList = new ArrayList<>(userAttributes.size() + patientAttributes.size());
         patientAttributes.add(new Pair<>(AttributeType.STRING, "type"));
-        patientAttributes.add(new Pair<>(AttributeType.STRING, "cost"));
+        patientAttributes.add(new Pair<>(AttributeType.FLOAT, "cost"));
         newList.addAll(userAttributes);
         newList.addAll(patientAttributes);
         return newList;
@@ -40,7 +41,7 @@ public class Operation extends HasActivty implements Table{
         return cost;
     }
 
-    public void setCost(double cost) {
+    public void setCost(float cost) {
         this.cost = cost;
     }
 }

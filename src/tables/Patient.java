@@ -31,13 +31,13 @@ public class Patient extends Users implements Table {
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> userAttributes = super.getAttributes();
-        userAttributes.remove(new Pair<>(AttributeType.STRING, "userid"));
+        userAttributes.remove(new Pair<>(AttributeType.INT, "userid"));
         List<Pair<AttributeType, String>> patientAttributes = new ArrayList<>();
         List<Pair<AttributeType, String>> newList = new ArrayList<>(userAttributes.size() + patientAttributes.size());
-        patientAttributes.add(new Pair<>(AttributeType.STRING, "dateofbirth"));
+        patientAttributes.add(new Pair<>(AttributeType.DATE, "dateofbirth"));
         patientAttributes.add(new Pair<>(AttributeType.STRING, "sex"));
         patientAttributes.add(new Pair<>(AttributeType.STRING, "medicalhistory"));
-        patientAttributes.add(new Pair<>(AttributeType.STRING, "patientid"));
+        patientAttributes.add(new Pair<>(AttributeType.INT, "patientid"));
         newList.addAll(userAttributes);
         newList.addAll(patientAttributes);
         return newList;

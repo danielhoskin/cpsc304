@@ -3,6 +3,7 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,16 +11,16 @@ import java.util.List;
 public class Assigned_To implements Table {
     private int patientid;
     private int bedid;
-    private Date admissiondate;
-    private Date releasedate;
+    private Timestamp admissiondate;
+    private Timestamp releasedate;
 
     @Override
     public List<Pair<AttributeType, String>> getAttributes() {
         List<Pair<AttributeType, String>> assignedtoAttributes = new ArrayList<>();
         assignedtoAttributes.add(new Pair<>(AttributeType.STRING, "patientid"));
         assignedtoAttributes.add(new Pair<>(AttributeType.STRING, "bedid"));
-        assignedtoAttributes.add(new Pair<>(AttributeType.DATE, "admissiondate"));
-        assignedtoAttributes.add(new Pair<>(AttributeType.DATE, "releasedate"));
+        assignedtoAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "admissiondate"));
+        assignedtoAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "releasedate"));
         return assignedtoAttributes;
     }
 
@@ -51,7 +52,7 @@ public class Assigned_To implements Table {
         return admissiondate;
     }
 
-    public void setAdmissiondate(Date admissiondate) {
+    public void setAdmissiondate(Timestamp admissiondate) {
         this.admissiondate = admissiondate;
     }
 
@@ -59,7 +60,7 @@ public class Assigned_To implements Table {
         return releasedate;
     }
 
-    public void setReleasedate(Date releasedate) {
+    public void setReleasedate(Timestamp releasedate) {
         this.releasedate = releasedate;
     }
 }
