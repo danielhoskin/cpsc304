@@ -28,3 +28,5 @@ drop sequence seq_diagnosisid;
 drop sequence seq_ailmentid;
 drop sequence seq_prescriptionid;
 drop sequence seq_noteid;
+
+DROP TRIGGER schedule_after_insert_users;

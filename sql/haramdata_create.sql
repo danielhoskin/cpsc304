@@ -277,3 +277,13 @@ create table has_note(
 		references has_diagnosis
 		on delete cascade)
 SEGMENT CREATION IMMEDIATE;
+
+CREATE TRIGGER schedule_after_insert_users
+	AFTER INSERT ON users
+	FOR EACH ROW
+BEGIN
+	for i in 1..7 loop
+		insert into has_dayschedule values(:new.userid, i, '0001-01-01 09:00:00', '0001-01-01 17:00:00'); 
+	end loop;
+END schedule_after_insert_users;
+/
