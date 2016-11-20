@@ -1,11 +1,5 @@
 package tables;
 
-import main.AttributeType;
-import main.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Has_Prescription implements Table{
     private int activityid;
     private int patientid;
@@ -13,18 +7,6 @@ public class Has_Prescription implements Table{
     private int diagnosisid;
     private int prescriptionid;
     private String details;
-
-    @Override
-    public List<Pair<AttributeType, String>> getAttributes() {
-        List<Pair<AttributeType, String>> prescriptionAttributes = new ArrayList<>();
-        prescriptionAttributes.add(new Pair<>(AttributeType.INT, "activityid"));
-        prescriptionAttributes.add(new Pair<>(AttributeType.INT, "patientid"));
-        prescriptionAttributes.add(new Pair<>(AttributeType.INT, "doctorid"));
-        prescriptionAttributes.add(new Pair<>(AttributeType.INT, "diagnosisid"));
-        prescriptionAttributes.add(new Pair<>(AttributeType.INT, "prescriptionid"));
-        prescriptionAttributes.add(new Pair<>(AttributeType.STRING, "details"));
-        return prescriptionAttributes;
-    }
 
     public int getActivityid() {
         return activityid;
@@ -74,14 +56,4 @@ public class Has_Prescription implements Table{
         this.details = details;
     }
 
-    @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        primarykey.add("activityid");
-        primarykey.add("patientid");
-        primarykey.add("doctorid");
-        primarykey.add("diagnosisid");
-        primarykey.add("prescriptionid");
-        return primarykey;
-    }
 }

@@ -1,7 +1,7 @@
 package database;
 
-import main.Pair;
-import main.ThreePair;
+import lib.Pair;
+import lib.ThreePair;
 import tables.*;
 
 import exceptions.ActivityException;
@@ -491,7 +491,6 @@ public class Database {
         return false;
     }
 
-    // TODO:
     public boolean addActivity(int patientid, int doctorid, int nurseid, Timestamp starttime, Timestamp endtime) throws SQLException, ActivityException {
     	// primary key values must not be null
     	try{
@@ -655,7 +654,6 @@ public class Database {
             }
             tf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("timefrom"));
             tt = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("timeto"));
-            // TODO:
             schedules.add(new ThreePair<>(day, tf, tt));
         }
         return schedules;

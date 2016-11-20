@@ -1,11 +1,6 @@
 package tables;
 
-import main.AttributeType;
-import main.Pair;
-
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Has_DaySchedule implements Table {
     private int userid;
@@ -18,24 +13,6 @@ public class Has_DaySchedule implements Table {
         this.dayid = dayid;
         this.timefrom = timefrom;
         this.timeto = timeto;
-    }
-
-    @Override
-    public List<Pair<AttributeType, String>> getAttributes() {
-        List<Pair<AttributeType, String>> dayscheduleAttributes = new ArrayList<>();
-        dayscheduleAttributes.add(new Pair<>(AttributeType.INT, "userid"));
-        dayscheduleAttributes.add(new Pair<>(AttributeType.INT, "dayid"));
-        dayscheduleAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "timefrom"));
-        dayscheduleAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "timeto"));
-        return dayscheduleAttributes;
-    }
-
-    @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        primarykey.add("userid");
-        primarykey.add("dayid");
-        return primarykey;
     }
 
     public int getUserid() {

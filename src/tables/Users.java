@@ -1,11 +1,5 @@
 package tables;
 
-import main.AttributeType;
-import main.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Users implements Table {
     private int userid;
     private String username;
@@ -19,24 +13,6 @@ public class Users implements Table {
         this.password = password;
         this.name = name;
         this.phonenumber = phonenumber;
-    }
-
-    @Override
-    public List<Pair<AttributeType, String>> getAttributes() {
-        List<Pair<AttributeType, String>> userAttributes = new ArrayList<>();
-        userAttributes.add(new Pair<>(AttributeType.INT, "userid"));
-        userAttributes.add(new Pair<>(AttributeType.STRING, "username"));
-        userAttributes.add(new Pair<>(AttributeType.STRING, "password"));
-        userAttributes.add(new Pair<>(AttributeType.STRING, "name"));
-        userAttributes.add(new Pair<>(AttributeType.STRING, "phonenumber"));
-        return userAttributes;
-    }
-
-    @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        primarykey.add("userid");
-        return primarykey;
     }
 
     public void setUserid(int userid) {

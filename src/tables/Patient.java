@@ -1,12 +1,7 @@
 package tables;
 
-import main.AttributeType;
-import main.Pair;
-
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Patient extends Users implements Table {
     private int patientid;
@@ -20,28 +15,6 @@ public class Patient extends Users implements Table {
         this.dateofbirth = dateofbirth;
         this.sex = sex;
         this.medicalhistory = medicalhistory;
-    }
-
-    @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        primarykey.add("patientid");
-        return primarykey;
-    }
-
-    @Override
-    public List<Pair<AttributeType, String>> getAttributes() {
-        List<Pair<AttributeType, String>> userAttributes = super.getAttributes();
-        userAttributes.remove(new Pair<>(AttributeType.INT, "userid"));
-        List<Pair<AttributeType, String>> patientAttributes = new ArrayList<>();
-        List<Pair<AttributeType, String>> newList = new ArrayList<>(userAttributes.size() + patientAttributes.size());
-        patientAttributes.add(new Pair<>(AttributeType.DATE, "dateofbirth"));
-        patientAttributes.add(new Pair<>(AttributeType.STRING, "sex"));
-        patientAttributes.add(new Pair<>(AttributeType.STRING, "medicalhistory"));
-        patientAttributes.add(new Pair<>(AttributeType.INT, "patientid"));
-        newList.addAll(userAttributes);
-        newList.addAll(patientAttributes);
-        return newList;
     }
 
     public int getPatientid() {

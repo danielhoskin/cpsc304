@@ -1,12 +1,5 @@
 package tables;
 
-import main.AttributeType;
-import main.Pair;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
 public class HasActivty implements Table {
     private int activityid;
     private int patientid;
@@ -23,27 +16,6 @@ public class HasActivty implements Table {
         this.starttime = starttime;
         this.endtime = endtime;
     }
-    @Override
-    public List<Pair<AttributeType, String>> getAttributes() {
-        List<Pair<AttributeType, String>> hasactivityAttributes = new ArrayList<>();
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.INT, "activityid"));
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.INT, "patientid"));
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.INT, "doctorid"));
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.INT, "nurseid"));
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.TIMESTAMP, "starttime"));
-        hasactivityAttributes.add(new Pair<AttributeType, String>(AttributeType.TIMESTAMP, "endtime"));
-        return hasactivityAttributes;
-    }
-
-    @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        primarykey.add("activityid");
-        primarykey.add("patientid");
-        primarykey.add("doctorid");
-        return primarykey;
-    }
-
     public int getActivityid() {
         return activityid;
     }

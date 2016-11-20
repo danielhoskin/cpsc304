@@ -1,12 +1,6 @@
 package tables;
 
-import main.AttributeType;
-import main.Pair;
-
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Has_Bill implements Table {
     private int patientid;
@@ -61,24 +55,5 @@ public class Has_Bill implements Table {
 
     public void setDay(Timestamp day) {
         this.day = day;
-    }
-
-    @Override
-    public List<Pair<AttributeType, String>> getAttributes() {
-        List<Pair<AttributeType, String>> billAttributes = new ArrayList<>();
-        billAttributes.add(new Pair<>(AttributeType.INT, "patientid"));
-        billAttributes.add(new Pair<>(AttributeType.INT, "billid"));
-        billAttributes.add(new Pair<>(AttributeType.FLOAT, "amountdue"));
-        billAttributes.add(new Pair<>(AttributeType.FLOAT, "amountpaid"));
-        billAttributes.add(new Pair<>(AttributeType.TIMESTAMP, "day"));
-        return billAttributes;
-    }
-
-    @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        primarykey.add("patientid");
-        primarykey.add("billid");
-        return primarykey;
     }
 }

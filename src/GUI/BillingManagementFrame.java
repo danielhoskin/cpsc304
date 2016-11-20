@@ -1,7 +1,7 @@
 package GUI;
 
 import database.Database;
-import main.Pair;
+import lib.Pair;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -100,7 +100,7 @@ public class BillingManagementFrame {
 
         submitButton = new JButton();
         submitButton.setText("Submit");
-        submitButton.addActionListener(new BillButtonListener());
+        submitButton.addActionListener(new BillButtonListener(billingTable));
         billingManipulationPanel.add(submitButton);
 
 
@@ -122,6 +122,11 @@ public class BillingManagementFrame {
 
     // Listener for Bill, queries the database and refreshes the table page if it is successful
     private static class BillButtonListener implements ActionListener {
+        private JTable billingTable;
+
+        public BillButtonListener(JTable billingTable) {
+            this.billingTable = billingTable;
+        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -146,7 +151,11 @@ public class BillingManagementFrame {
 
            try {
                if (Database.getInstance().updateAmountPaid(Integer.parseInt(givenBillID), Float.parseFloat(givenBillAmount))) {
-                   // TODO: refresh bills
+                   // TODO: refresh bills after updating amount paid
+                   // TODO: Joseph pls. Something like this -- but it's not working correctly
+//                   billingManagementFrame.dispose();
+//                   billingManagementFrame = new JFrame();
+//                   new BillingManagementFrame(billingTable);
                } else {
                    JOptionPane.showMessageDialog(null, "Unable to update bill: " + givenBillID, "Error", JOptionPane.INFORMATION_MESSAGE);
                }

@@ -4,7 +4,7 @@ package GUI;
  */
 
 import database.Database;
-import main.ThreePair;
+import lib.ThreePair;
 import tables.*;
 
 import javax.swing.*;
@@ -290,14 +290,6 @@ public class MainFrame {
         }
     }
 
-    private static class JoinListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, "You Pressed the Join button.");
-        }
-    }
-
     private static class DivisionListener implements ActionListener {
         private Nurse nurse;
 
@@ -320,21 +312,26 @@ public class MainFrame {
                 }
                 Object monitorsColumnNames[] = {"PatientID", "Notes"} ;
                 JTable monitorsTable = new JTable(monitorsData, monitorsColumnNames);
-                // TODO: new frame
+                // TODO: (addison? )show all the monitors relationships with the frame above together with the new frame below (this is not complete)
+                // TODO: also need to add the buttons/listeners for adding/removing a monitors relationship
+                List<Integer> pids = Database.getInstance().monitoredByEveryNurse();
+                Object mData[][] = new Object[0][0];
+                if (!pids.isEmpty()) {
+                    mData = new Object[pids.size()][1];
+                    Iterator<Integer> m_iterator = pids.iterator();
+                    Integer pid = null;
+                    for (int r = 0; r < pids.size(); r++) {
+                        pid = m_iterator.next();
+                        mData[r][0] = pid;
+                    }
+                }
+                Object mColumnNames[] = { "Patient ID"} ;
+                JTable mTable= new JTable(monitorsData, mColumnNames);
+                MedicalTable newTable = new MedicalTable(mTable);
             } catch(SQLException er) {
                 JOptionPane.showMessageDialog(null, "Unable to render monitors.");
                 er.printStackTrace();
             }
-        }
-    }
-
-    private static class AggregationListener implements ActionListener {
-
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, "You Pressed the Aggregation button.");
-
         }
     }
 
@@ -369,7 +366,11 @@ public class MainFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, "You Pressed the Patient Management button.");
+            // TODO: addison -- new frame/view part of this
+            // TODO: implement this... should be on the same frame to delete a monitors in nurse view
+            // TODO: might want to add a button for adding a monitors as well...
+            // TODO: joseph pls -- the database logic for making the object[][] and jtable
+            JOptionPane.showMessageDialog(null, "You Pressed the Delete Monitors button.");
             Object patientData[][] = {
 
                     { "Ritchie","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
@@ -463,7 +464,7 @@ public class MainFrame {
                 Has_Diagnosis diagnosis = null;
                 Object diagnosisID[][] = new Object[diagnosises.size()][3];
                 for (int r = 0; r < diagnosises.size(); r++) {
-                    diagnosis= iterator.next();
+                    diagnosis = iterator.next();
                     diagnosisID[r][0] = diagnosis.getPatientid();
                     diagnosisID[r][1] = doctor.getUserid();
                     diagnosisID[r][2] = diagnosis.getDiagnosisid();

@@ -1,11 +1,7 @@
 package tables;
 
-import main.AttributeType;
-import main.Pair;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GeneratesOperationBill extends Has_Bill implements Table {
     private int activityid;
@@ -17,34 +13,6 @@ public class GeneratesOperationBill extends Has_Bill implements Table {
         this.activityid = activityid;
         this.doctorid = doctorid;
         this.receptionistid = receptionistid;
-    }
-
-    @Override
-    public List<Pair<AttributeType, String>> getAttributes() {
-        List<Pair<AttributeType, String>> billAttributes = super.getAttributes();
-        List<Pair<AttributeType, String>> operationBillAttributes = new ArrayList<>();
-        List<Pair<AttributeType, String>> newList = new ArrayList<>();
-
-        operationBillAttributes.add(new Pair<>(AttributeType.INT, "activityid"));
-        operationBillAttributes.add(new Pair<>(AttributeType.INT, "doctorid"));
-        operationBillAttributes.add(new Pair<>(AttributeType.INT, "receptionistid"));
-
-        newList.addAll(billAttributes);
-        newList.addAll(operationBillAttributes);
-        return newList;
-    }
-
-    @Override
-    public List<String> primaryKey() {
-        List<String> primarykey = new ArrayList<>();
-        List<String> billPrimaryKey = super.primaryKey();
-        List<String> list = new ArrayList<>();
-        primarykey.add("activityid");
-        primarykey.add("doctorid");
-        primarykey.add("receptionistid");
-        list.addAll(primarykey);
-        list.addAll(billPrimaryKey);
-        return list;
     }
 
     public int getActivityid() {

@@ -1,4 +1,4 @@
-package main;
+package lib;
 
 public class Pair<L, R> {
 

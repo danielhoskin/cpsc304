@@ -163,9 +163,9 @@ public class ActivityManagementFrame {
 
     // Listener for AddActivity, queries the database and refreshes the table page if it is successful
     private static class AddActivityListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
+            // TODO:  pls Joseph
             String givenPatientID = patientNameText.getText();
             String givenDoctorID = doctorNameText.getText();
             String givenNurseId = nurseNameText.getText();
