@@ -3,6 +3,7 @@ package tables;
 import main.AttributeType;
 import main.Pair;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +62,10 @@ public class Patient extends Users implements Table {
 
     public Date getDateofbirth() {
         return dateofbirth;
+    }
+
+    public int getAge() {
+        return Year.now().getValue() - (1900 + dateofbirth.getYear());
     }
 
     public void setDateofbirth(Date dateofbirth) {

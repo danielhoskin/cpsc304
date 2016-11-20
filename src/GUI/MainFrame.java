@@ -97,7 +97,7 @@ public class MainFrame {
 
         JButton division = new JButton();
         division.setText("Patient Monitoring");
-        division.addActionListener(new DivisionListener());
+        division.addActionListener(new DivisionListener(nurseUser));
         buttonPanel.add(division);
 
         JLabel name = new JLabel("Name: " + nurseUser.getName());
@@ -123,7 +123,7 @@ public class MainFrame {
 
         JButton nestedAggregation = new JButton();
         nestedAggregation.setText("Billing Management");
-        nestedAggregation.addActionListener(new NestedAggregationListner());
+        nestedAggregation.addActionListener(new NestedAggregationListener());
         buttonPanel.add(nestedAggregation);
 
         JButton update = new JButton();
@@ -299,12 +299,32 @@ public class MainFrame {
     }
 
     private static class DivisionListener implements ActionListener {
+        private Nurse nurse;
 
+        public DivisionListener(Nurse nurse) {
+            this.nurse = nurse;
+        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, "You Pressed the Patient Monitoring button.");
-
+            try {
+                List<Monitors> monitors = mainConnection.getMonitors(nurse.getNurseid());
+                Iterator<Monitors> iterator = monitors.iterator();
+                Monitors monitor = null;
+                Object monitorsData[][] = new Object[monitors.size()][2];
+                for (int r = 0; r < monitors.size(); r++) {
+                    monitor= iterator.next();
+                    monitorsData[r][0] = monitor.getPatientid();
+                    monitorsData[r][1] = monitor.getNotes();
+                }
+                Object monitorsColumnNames[] = {"PatientID", "Notes"} ;
+                JTable monitorsTable = new JTable(monitorsData, monitorsColumnNames);
+                // TODO: new frame
+            } catch(SQLException er) {
+                JOptionPane.showMessageDialog(null, "Unable to render monitors.");
+                er.printStackTrace();
+            }
         }
     }
 
@@ -318,13 +338,13 @@ public class MainFrame {
         }
     }
 
-    private static class NestedAggregationListner implements ActionListener {
+    private static class NestedAggregationListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 List<Has_Bill> bills = mainConnection.getBills();
-                Iterator<Has_Bill> iterator =bills.iterator();
+                Iterator<Has_Bill> iterator = bills.iterator();
                 Has_Bill bill = null;
                 Object billData[][] = new Object[bills.size()][4];
                 for (int r = 0; r <bills.size(); r++) {
@@ -378,45 +398,53 @@ public class MainFrame {
     }
 
     private static class UpdateListener implements ActionListener {
-
-
-
         @Override
         public void actionPerformed(ActionEvent e) {
+            try {
+                List<Patient> patients = mainConnection.getPatients();
+                Iterator<Patient> iterator = patients.iterator();
+                Patient patient = null;
+                Object patientData[][] = new Object[patients.size()][3];
+                for (int r = 0; r < patients.size(); r++) {
+                    patient = iterator.next();
+                    patientData[r][0] = patient.getName();
+                    patientData[r][1] = patient.getUserid();
+                    patientData[r][2] = patient.getSex();
+                }
+                Object patientColumnNames[] = { "Patient Name", "Patient ID", "Sex"} ;
+                JTable patientTable = new JTable(patientData, patientColumnNames);
 
-            Object patientData[][] = {
+                List<Doctor> doctors = mainConnection.getDoctors();
+                Iterator<Doctor> iterator_d = doctors.iterator();
+                Doctor doctor = null;
+                Object doctorData[][] = new Object[doctors.size()][2];
+                for (int r = 0; r < doctors.size(); r++) {
+                    doctor = iterator_d.next();
+                    doctorData[r][0] = doctor.getName();
+                    doctorData[r][1] = doctor.getUserid();
+                }
+                Object doctorColumnNames[] = { "Doctor Name", "Doctor ID"} ;
+                JTable doctorTable = new JTable(doctorData, doctorColumnNames);
 
-                    { "Ritchie","5258932","Male"},
-                    { "Welles","5258932","Male"},
-                    { "Capra","5258932","Male"},
-
-            };
-            Object patientColumnNames[] = { "Patient Name", "Patient ID", "Sex"} ;
-            JTable patientTable = new JTable(patientData, patientColumnNames);
-
-            Object doctorData[][] = {
-
-                    { "Tarintino","5258932"},
-                    { "Michael Bay","5258932"},
-                    { "Joseph Levit","5258932"},
-            };
-            Object doctorColumnNames[] = { "Doctor Name", "Doctor ID"} ;
-            JTable doctorTable = new JTable(doctorData, doctorColumnNames);
-
-            Object nurseData[][] = {
-
-
-                    { "Carpenter","5258932" },
-                    { "Jodorowsky","5258932"},
-                    { "Christopher Nolan","5258932"},
-            };
-
-            Object nurseColumnNames[] = { "Nurse Name", "Nurse ID" } ;
-            JTable nurseTable = new JTable(nurseData, nurseColumnNames);
+                List<Nurse> nurses = mainConnection.getNurses();
+                Iterator<Nurse> iterator_n= nurses.iterator();
+                Nurse nurse = null;
+                Object nurseData[][] = new Object[nurses.size()][2];
+                for (int r = 0; r < nurses.size(); r++) {
+                    nurse = iterator_n.next();
+                    nurseData[r][0] = nurse.getName();
+                    nurseData[r][1] = nurse.getUserid();
+                }
+                Object nurseColumnNames[] = { "Nurse Name", "Nurse ID" } ;
+                JTable nurseTable = new JTable(nurseData, nurseColumnNames);
 
 
-            JOptionPane.showMessageDialog(null, "You Pressed the Activity Management button.");
-            ActivityManagementFrame activityManagementFrame = new ActivityManagementFrame(patientTable,doctorTable,nurseTable);
+                JOptionPane.showMessageDialog(null, "You Pressed the Activity Management button.");
+                ActivityManagementFrame activityManagementFrame = new ActivityManagementFrame(patientTable,doctorTable,nurseTable);
+            } catch(SQLException er) {
+                JOptionPane.showMessageDialog(null, "Unable to render tables.");
+                er.printStackTrace();
+            }
         }
     }
 
@@ -444,7 +472,7 @@ public class MainFrame {
                 JTable diagnosisTable = new JTable(diagnosisID, diagnosisColumnNames);
 
                 JOptionPane.showMessageDialog(null, "You Pressed the Diagnosis Management button.");
-                DiagnosisManagementFrame diagnosisManagementFrame = new DiagnosisManagementFrame(diagnosisTable);
+                DiagnosisManagementFrame diagnosisManagementFrame = new DiagnosisManagementFrame(diagnosisTable, doctor);
             } catch(SQLException er) {
                 JOptionPane.showMessageDialog(null, "Unable to render diagnosises.");
                 er.printStackTrace();
