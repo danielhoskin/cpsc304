@@ -1,10 +1,14 @@
 package GUI;
 
+import database.Database;
+import main.Pair;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  * Created by AddisonSasko on 2016-11-13.
@@ -52,7 +56,6 @@ public class BillingManagementFrame {
 
         RenderTable(billingTable);
         RenderInteractiveSpace();
-
     }
 
 
@@ -125,27 +128,31 @@ public class BillingManagementFrame {
             String givenBillID = billIDText.getText();
             String givenBillAmount = amountText.getText();
 
-
             if (givenBillID.equals("") && givenBillAmount.equals("")){
                 final ImageIcon icon = new ImageIcon("/Users/AddisonSasko/Desktop/comfy.jpg");
                 JOptionPane.showMessageDialog(null, "Please provide a valid Billing ID and a valid amount", "Error", JOptionPane.INFORMATION_MESSAGE ,icon);
                 return;
             }
-
-
-
             if (givenBillID.equals("")){
                 final ImageIcon icon = new ImageIcon("/Users/AddisonSasko/Desktop/comfy.jpg");
                 JOptionPane.showMessageDialog(null, "Please provide a valid Billing ID", "Error", JOptionPane.INFORMATION_MESSAGE ,icon);
                 return;
             }
-
             if (givenBillAmount.equals("")){
                 final ImageIcon icon = new ImageIcon("/Users/AddisonSasko/Desktop/comfy.jpg");
                 JOptionPane.showMessageDialog(null, "Please provide a valid amount", "Error", JOptionPane.INFORMATION_MESSAGE ,icon);
                 return;
             }
 
+           try {
+               if (Database.getInstance().updateAmountPaid(Integer.parseInt(givenBillID), Float.parseFloat(givenBillAmount))) {
+                   // TODO: refresh bills
+               } else {
+                   JOptionPane.showMessageDialog(null, "Unable to update bill: " + givenBillID, "Error", JOptionPane.INFORMATION_MESSAGE);
+               }
+           } catch(SQLException err) {
+
+           }
         }
     }
 
@@ -153,17 +160,18 @@ public class BillingManagementFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object billData[][] = {
-
-                    { "Ritchie","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Welles","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Capra","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Warhol","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-            };
-            Object billColumnNames[] = { "Bill ID", "Patient ID", "Amount Due", "Amount Paid","Date", "Type" } ;
-            JTable billTable = new JTable(billData, billColumnNames);
-            MedicalTable newTable = new MedicalTable(billTable);
-
+            try {
+                Pair<Integer, Float> pair = Database.getInstance().getDoctorWithMaximumAverageOperationCost();
+                Object doctorData[][] = new Object[1][2];
+                doctorData[0][0] = pair.getLeft();
+                doctorData[0][1] = pair.getRight();
+                Object billColumnNames[] = { "Doctor ID", "Maximum Average Operation Cost"} ;
+                JTable billTable = new JTable(doctorData, billColumnNames);
+                MedicalTable newTable = new MedicalTable(billTable);
+            } catch(SQLException er) {
+                JOptionPane.showMessageDialog(null, "Unable to render maximum average operation cost.");
+                er.printStackTrace();
+            }
         }
     }
 }

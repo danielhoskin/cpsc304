@@ -1,9 +1,8 @@
 package database;
 
 import main.Pair;
+import main.ThreePair;
 import tables.*;
-
-import javax.print.Doc;
 
 import exceptions.ActivityException;
 
@@ -23,8 +22,8 @@ public class Database {
     private Database() {
         try {
             String connectionURL = "jdbc:oracle:thin:@localhost:1522:ug";
-            String username = "ora_y9w8";
-            String password = "a35170133";
+            String username = "ora_h8y9a";
+            String password = "a37594132";
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             connection = DriverManager.getConnection(connectionURL, username, password);
         }
@@ -118,7 +117,6 @@ public class Database {
             }
             mh = rs.getString("medicalhistory");
             patients.add(new Patient(un, pw, pn, phn, pi, db, sx, mh));
-            System.out.println(un + " " + pw + " " + pn + " " + phn + " " + pi + " " + db + " " + sx + " " + mh);
         }
         return patients;
     }
@@ -146,7 +144,6 @@ public class Database {
                 throw new SQLException();
             }
         }
-        System.out.println( bedid + " " + location );
         return new Pair<>(bedid, location);
     }
 
@@ -176,7 +173,6 @@ public class Database {
         } else {
            query = "insert into monitors values(" + patientid + ", " + nurseid + ", '" + notes + "')";
         }
-        System.out.println(query);
         int result = stmt.executeUpdate(query);
         return result == 1;
     }
@@ -201,7 +197,6 @@ public class Database {
             pid = rs.getInt("patientid");
             notes = rs.getString("notes");
             monitors.add(new Monitors(pid, nurseid, notes));
-            System.out.println(pid + " " + nurseid);
         }
         return monitors;
     }
@@ -218,7 +213,6 @@ public class Database {
             pid = rs.getInt("patientid");
             ad = rs.getFloat("amountdue");
             patients.add(new Pair<>(pid, ad));
-            System.out.println(pid + " " + ad);
         }
         return patients;
     }
@@ -235,7 +229,6 @@ public class Database {
             pid = rs.getInt("patientid");
             ad = rs.getFloat("amountdue");
             patients.add(new Pair<>(pid, ad));
-            System.out.println(pid + " " + ad);
         }
         return patients;
     }
@@ -302,7 +295,6 @@ public class Database {
             }
             mh = rs.getString("medicalhistory");
             patients.add(new Patient(un, pw, pn, phn, pi, db, sx, mh));
-            System.out.println(un + " " + pw + " " + pn + " " + phn + " " + pi + " " + db + " " + sx + " " + mh);
         }
         return patients;
     }
@@ -412,7 +404,7 @@ public class Database {
         return receptionists;
     }
 
-    public List<Has_Diagnosis> getDiagnosises(int doctorid) throws SQLException {
+    public List<Has_Diagnosis> getDoctorDiagnosises(int doctorid) throws SQLException {
         Statement stmt = connection.createStatement();
         String query = "select * from has_diagnosis d where d.doctorid = " + doctorid;
         ResultSet rs = stmt.executeQuery(query);
@@ -428,7 +420,6 @@ public class Database {
             pid = rs.getInt("patientid");
             did = rs.getInt("diagnosisid");
             diagnosises.add(new Has_Diagnosis(aid, pid, doctorid, did));
-            System.out.println(aid + " " + pid + " " + doctorid + " " + did);
         }
         return diagnosises;
     }
@@ -517,8 +508,6 @@ public class Database {
     	String enddate =  new SimpleDateFormat("yyyy-MM-dd").format(endtime);
     	int activityStart = Integer.parseInt(new SimpleDateFormat("H").format(starttime)) * 60 + Integer.parseInt(new SimpleDateFormat("m").format(starttime)); 
     	int activityEnd = Integer.parseInt(new SimpleDateFormat("H").format(endtime)) * 60 + Integer.parseInt(new SimpleDateFormat("m").format(endtime));
-    	System.out.println( activityStart + " " + activityEnd );
-    	System.out.println( startdate + " " + enddate);
     	try {
     		if( !(startdate.equals(enddate)) ){
     			throw new ActivityException("Cannot have an activity spanning more than 1 day.");
@@ -561,7 +550,6 @@ public class Database {
         
         // see if there are any special schedules
         String startdayofweeknum = new SimpleDateFormat("u").format(starttime);	// returns "1" to "7", 1 = Monday, 2 = Tuesday...
-        System.out.println(startdayofweeknum);
         int scheduleStart = 540; // 9 am in minutes
         int scheduleEnd = 1020;	// 5 pm in minutes
         int dayid = 0;
@@ -590,7 +578,6 @@ public class Database {
 			}
 			dayid = Integer.parseInt(startdayofweeknum);
         }
-    	System.out.println(dayid);
         // check if activity is within this user's schedule
         try{
         	if( scheduleStart == scheduleEnd )
@@ -630,22 +617,46 @@ public class Database {
         return true;
     }
 
-    public List<Has_DaySchedule> getDaySchedule(int userId) throws SQLException {
+    public List<ThreePair<String, String, String>> getDaySchedule(int userId) throws SQLException {
         Statement stmt = connection.createStatement();
         String query = "select * from has_dayschedule where userid = " + userId;
         ResultSet rs = stmt.executeQuery(query);
 
-        List<Has_DaySchedule> schedules = new ArrayList<>();
+        List<ThreePair<String, String, String>> schedules = new ArrayList<>();
         int dt;
-        Timestamp tf;
-        Timestamp tt;
+        String tf;
+        String tt;
 
         while (rs.next()) {
             dt = rs.getInt("dayid");
-            tf = rs.getTimestamp("timefrom");
-            tt = rs.getTimestamp("timeto");
-            schedules.add(new Has_DaySchedule(userId, dt, tf, tt));
-            System.out.println(userId + " " + dt + " " + tf + " " + tt );
+            String day = "";
+            switch (dt) {
+                case 1:
+                    day = "Monday";
+                    break;
+                case 2:
+                    day = "Tuesday";
+                    break;
+                case 3:
+                    day = "Wednesday";
+                    break;
+                case 4:
+                    day = "Thursday";
+                    break;
+                case 5:
+                    day = "Friday";
+                    break;
+                case 6:
+                    day = "Saturday";
+                    break;
+                case 7:
+                    day = "Sunday";
+                    break;
+            }
+            tf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("timefrom"));
+            tt = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("timeto"));
+            // TODO:
+            schedules.add(new ThreePair<>(day, tf, tt));
         }
         return schedules;
     }
@@ -659,28 +670,92 @@ public class Database {
         int aid;
         int did;
         int nid;
-        Timestamp st;
-        Timestamp et;
+        String st;
+        String et;
 
         while (rs.next()) {
             aid = rs.getInt("activityid");
             did = rs.getInt("doctorid");
             nid = rs.getInt("nurseid");
-            st = rs.getTimestamp("starttime");
-            et = rs.getTimestamp("endtime");
+            st = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("starttime"));
+            et = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("endtime"));
             activities.add(new HasActivty(aid, patientId, did, nid, st, et));
-            System.out.println(aid + " " + patientId + " " + did + " " + nid + " " + st + " " + et );
         }
         return activities;
     }
 
-
-    public List<Has_Bill> getBills(int patientid) throws SQLException {
+    public List<HasActivty> getDoctorActivities(int doctorId) throws  SQLException {
         Statement stmt = connection.createStatement();
-        String query = "select * from has_bill where patientid = " + patientid;
+        String query = "select * from has_activity where doctorid = " + doctorId;
+        ResultSet rs = stmt.executeQuery(query);
+
+        List<HasActivty> activities = new ArrayList<>();
+        int aid;
+        int pid;
+        int nid;
+        String st;
+        String et;
+
+        while (rs.next()) {
+            aid = rs.getInt("activityid");
+            pid = rs.getInt("patientid");
+            nid = rs.getInt("nurseid");
+            st = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("starttime"));
+            et = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("endtime"));
+            activities.add(new HasActivty(aid, pid, doctorId, nid, st, et));
+        }
+        return activities;
+    }
+
+    public List<HasActivty> getNurseActivities(int nurseId) throws  SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from has_activity where nurseid = " + nurseId;
+        ResultSet rs = stmt.executeQuery(query);
+
+        List<HasActivty> activities = new ArrayList<>();
+        int aid;
+        int did;
+        int pid;
+        String st;
+        String et;
+
+        while (rs.next()) {
+            aid = rs.getInt("activityid");
+            did = rs.getInt("doctorid");
+            pid = rs.getInt("patientid");
+            st = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("starttime"));
+            et = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(rs.getTimestamp("endtime"));
+            activities.add(new HasActivty(aid, pid, did, nurseId, st, et));
+        }
+        return activities;
+    }
+
+    public String getActivityDescription(int activityid) throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query1 = "select * from appointment where activityid = " + activityid;
+        ResultSet rs = stmt.executeQuery(query1);
+
+        String description = "";
+
+        if (rs.next()) {
+            description = rs.getString("notes");
+        } else {
+            String query2 = "select * from operation where activityid = " + activityid;
+            rs = stmt.executeQuery(query2);
+            if (rs.next()) {
+                description = rs.getString("type");
+            }
+        }
+        return description;
+    }
+
+    public List<Has_Bill> getBills() throws SQLException {
+        Statement stmt = connection.createStatement();
+        String query = "select * from has_bill";
         ResultSet rs = stmt.executeQuery(query);
 
         int bid;
+        int pid;
         float ad;
         float ap;
         Timestamp d;
@@ -688,10 +763,11 @@ public class Database {
 
         while (rs.next()) {
             bid = rs.getInt("billid");
+            pid = rs.getInt("patientid");
             ad = rs.getFloat("amountdue");
             ap = rs.getFloat("amountpaid");
             d = rs.getTimestamp("day");
-            bills.add(new Has_Bill(patientid, bid, ad, ap, d));
+            bills.add(new Has_Bill(pid, bid, ad, ap, d));
         }
         return bills;
     }
@@ -770,8 +846,7 @@ public class Database {
                 throw new SQLException();
             }
             mh = rs.getString("medicalhistory");
-            patient = (new Patient(un, pw, pn, phn, userid, db, sx, mh));
-            System.out.println(un + " " + pw + " " + pn + " " + phn + " " + userid + " " + db + " " + sx + " " + mh );
+            patient = new Patient(un, pw, pn, phn, userid, db, sx, mh);
         }
         return patient;
     }
@@ -805,7 +880,6 @@ public class Database {
                 throw new SQLException();
             }
             doctor = new Doctor(un, pw, dn, phn, userid);
-            System.out.println( un + " " + pw + " " + dn + " " + phn + " " + userid );
         }
         return doctor;
     }
@@ -839,7 +913,6 @@ public class Database {
                 throw new SQLException();
             }
             nurse = new Nurse(un, pw, nn, phn, userid);
-            System.out.println(un + " " + pw + " " + nn + " " + phn + " " + userid );
         }
         return nurse;
     }
@@ -873,7 +946,6 @@ public class Database {
                 throw new SQLException();
             }
             receptionist = new Receptionist(un, pw, nn, phn, userid);
-            System.out.println(un + " " + pw + " " + nn + " " + phn + " " + userid );
         }
         return receptionist;
     }
@@ -894,7 +966,6 @@ public class Database {
             did = rs.getInt("doctorid");
             c = rs.getFloat("maxSum");
             pair = new Pair<>(did, c);
-            System.out.println(did + " " + c );
         }
         return pair;
     }
@@ -915,7 +986,6 @@ public class Database {
             did = rs.getInt("doctorid");
             c = rs.getFloat("minSum");
             pair = new Pair<>(did, c);
-            System.out.println( did + " " + c );
         }
         return pair;
     }
@@ -970,7 +1040,7 @@ public class Database {
                 System.out.println(rep.getReceptionistid());
             }
             db.getMonitors(20);
-            db.getDiagnosises(6);
+            db.getDoctorDiagnosises(6);
             db.getPatient(3);
             db.getDoctor(6);
             db.getNurse(20);

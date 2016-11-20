@@ -10,7 +10,7 @@ import java.util.List;
 public class Appointment extends HasActivty implements Table{
     private String notes;
 
-    public Appointment(int activityid, int patientid, int doctorid, int nurseid, Timestamp starttime, Timestamp endtime, String notes) {
+    public Appointment(int activityid, int patientid, int doctorid, int nurseid, String starttime, String endtime, String notes) {
         super(activityid, patientid, doctorid, nurseid, starttime, endtime);
         this.notes = notes;
     }

@@ -1,7 +1,13 @@
 package GUI;
+import database.Database;
+import tables.*;
+
+import javax.print.Doc;
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class LoginScreen {
 
@@ -10,10 +16,13 @@ public class LoginScreen {
 
     static JFrame frame;
 
-    private static JTextField userText;
+    private static JTextField userIDText;
     private static JTextField passwordText;
     private static JLabel passwordLabel;
-    private static JLabel userLabel;
+    private static JLabel userIDLabel;
+    private static Database loginConnection;
+
+
 
 
     public LoginScreen(){
@@ -23,6 +32,8 @@ public class LoginScreen {
 
     private static void initialiseComponents() {
 
+        loginConnection = Database.getInstance();
+
         frame = new JFrame("Harambase Inc.");
         frame.setSize(WIDTH, HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,12 +42,12 @@ public class LoginScreen {
         frame.add(panel);
         panel.setLayout(null);
 
-        userLabel = new JLabel("Username");
-        userLabel.setBounds(10, 10, 80, 25);
-        panel.add(userLabel);
-        userText = new JTextField(20);
-        userText.setBounds(100, 10, 160, 25);
-        panel.add(userText);
+        userIDLabel = new JLabel("User ID");
+        userIDLabel.setBounds(10, 10, 80, 25);
+        panel.add(userIDLabel);
+        userIDText = new JTextField(20);
+        userIDText.setBounds(100, 10, 160, 25);
+        panel.add(userIDText);
 
 
         passwordLabel = new JLabel("Password");
@@ -63,19 +74,52 @@ public class LoginScreen {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            String givenUsername = userText.getText();
+            String givenUsername = userIDText.getText();
             String givenPassword = passwordText.getText();
 
-            if (givenUsername.equals("John") && givenPassword.equals("123")){
-                JOptionPane.showMessageDialog(null, "Login Successfully Attempted");
-                MainFrame primaryFrame = new MainFrame(new User("John", 3));
-                frame.dispose();
+            try {
+                int userId = Integer.parseInt(givenUsername);
+                if (loginConnection.checkUser(userId, givenPassword)){
+                    JOptionPane.showMessageDialog(null, "Login Successfully Attempted");
+                    if (loginConnection.isPatient(userId)) {
+                        Patient newPatient = loginConnection.getPatient(userId);
+                        MainFrame primaryFrame = new MainFrame(newPatient);
+                        frame.dispose();
+                    }
+                    else if (loginConnection.isDoctor(userId)){
+                        Doctor newDoctor = loginConnection.getDoctor(userId);
+                        MainFrame primaryFrame = new MainFrame(newDoctor);
+                        frame.dispose();
+                    }
+                    else if (loginConnection.isNurse(userId)){
+                        Nurse newNurse = loginConnection.getNurse(userId);
+                        MainFrame primaryFrame = new MainFrame(newNurse);
+                        frame.dispose();
+                    }
+                    else if (loginConnection.isReceptionist(userId)){
+                        Receptionist newReceptionist = loginConnection.getReceptionist(userId);
+                        MainFrame primaryFrame = new MainFrame(newReceptionist);
+                        frame.dispose();
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Username or password is invalid, please try again.");
+                    userIDText.setText("");
+                    passwordText.setText("");
+                }
+            } catch (SQLException e1) {
+                JOptionPane.showMessageDialog(null, "Username or password is invalid, please try again.");
+                userIDText.setText("");
+                passwordText.setText("");
+                e1.printStackTrace();
+            }
+            catch (NumberFormatException e2){
+                JOptionPane.showMessageDialog(null, "Username or password is invalid, please try again.");
+                userIDText.setText("");
+                passwordText.setText("");
+                e2.printStackTrace();
             }
 
-            else
-                JOptionPane.showMessageDialog(null, "Username or password is invalid, please try again.");
-                userText.setText("");
-                passwordText.setText("");
         }
     }
 

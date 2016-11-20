@@ -12,10 +12,10 @@ public class HasActivty implements Table {
     private int patientid;
     private int doctorid;
     private int nurseid;
-    private Timestamp starttime;
-    private Timestamp endtime;
+    private String starttime;
+    private String endtime;
 
-    public HasActivty(int activityid, int patientid, int doctorid, int nurseid, Timestamp starttime, Timestamp endtime) {
+    public HasActivty(int activityid, int patientid, int doctorid, int nurseid, String starttime, String endtime) {
         this.activityid = activityid;
         this.patientid = patientid;
         this.doctorid = doctorid;
@@ -76,19 +76,19 @@ public class HasActivty implements Table {
         this.nurseid = nurseid;
     }
 
-    public Timestamp getStarttime() {
+    public String getStarttime() {
         return starttime;
     }
 
-    public void setStarttime(Timestamp starttime) {
+    public void setStarttime(String starttime) {
         this.starttime = starttime;
     }
 
-    public Timestamp getEndtime() {
+    public String getEndtime() {
         return endtime;
     }
 
-    public void setEndtime(Timestamp endtime) {
+    public void setEndtime(String endtime) {
         this.endtime = endtime;
     }
 }
