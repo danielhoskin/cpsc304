@@ -3,6 +3,7 @@ package GUI;
 import database.Database;
 import lib.Pair;
 
+import javax.accessibility.AccessibleAction;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -26,7 +27,8 @@ public class BillingManagementFrame {
     JPanel mainPanel;
     JTable billingTable;
     JPanel billingManipulationPanel;
-    JPanel billingInterestingPanel;
+    JPanel billingArrangeByMaximumPanel;
+    JPanel billingArrangeByMinimumPanel;
 
 
     /*
@@ -37,9 +39,12 @@ public class BillingManagementFrame {
     private static JLabel billIDLabel;
     private static JLabel amountLabel;
     private static JButton submitButton;
+    private static JButton arrangeByMaximumButton;
+    private static JButton arrangeByMinimumButton;
 
 
     private static JButton arrangeBySize;
+    private static JButton arrangeBySmallest;
 
 
     // Constructor for the ActivityManagementFrame
@@ -75,6 +80,7 @@ public class BillingManagementFrame {
 
     // Renders the interactive space for the frame: buttons, texts and tags
     private void RenderInteractiveSpace(){
+
         billingManipulationPanel = new JPanel();
         billingManipulationPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
                 "Update Bill",
@@ -104,19 +110,52 @@ public class BillingManagementFrame {
         billingManipulationPanel.add(submitButton);
 
 
-        billingInterestingPanel = new JPanel();
-        billingInterestingPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
+        billingArrangeByMaximumPanel = new JPanel();
+        billingArrangeByMaximumPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
                 "Bill Averages By Doctor",
                 TitledBorder.CENTER,
                 TitledBorder.TOP));
-        billingInterestingPanel.setLayout(new FlowLayout());
-        billingManagementFrame.add(billingInterestingPanel);
+        billingArrangeByMaximumPanel.setLayout(new FlowLayout());
+        billingManagementFrame.add(billingArrangeByMaximumPanel);
 
-        arrangeBySize = new JButton();
-        arrangeBySize.setText("Submit");
-        arrangeBySize.addActionListener(new BillByDoctorListener());
-        billingInterestingPanel.add(arrangeBySize);
+        arrangeByMaximumButton = new JButton();
+        arrangeByMaximumButton.setText("Submit");
+        arrangeByMaximumButton.addActionListener(new BillDoctorByHighestListener());
+        billingArrangeByMinimumPanel.add(arrangeByMaximumButton);
 
+
+        billingArrangeByMinimumPanel = new JPanel();
+        billingArrangeByMinimumPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
+                "Bill Averages By Doctor",
+                TitledBorder.CENTER,
+                TitledBorder.TOP));
+        billingArrangeByMinimumPanel.setLayout(new FlowLayout());
+        billingManagementFrame.add(billingArrangeByMinimumPanel);
+
+        arrangeByMinimumButton = new JButton();
+        arrangeByMinimumButton.setText("Submit");
+        arrangeByMinimumButton.addActionListener(new BillByDoctorLowestListener());
+        billingArrangeByMinimumPanel.add(arrangeByMinimumButton);
+
+    }
+
+    private static class BillByDoctorLowestListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                Pair<Integer, Float> pair = Database.getInstance().getDoctorWithMaximumAverageOperationCost();
+                Object doctorData[][] = new Object[1][2];
+                doctorData[0][0] = pair.getLeft();
+                doctorData[0][1] = pair.getRight();
+                Object billColumnNames[] = { "Doctor ID", "Maximum Average Operation Cost"} ;
+                JTable billTable = new JTable(doctorData, billColumnNames);
+                MedicalTable newTable = new MedicalTable(billTable);
+            } catch(SQLException er) {
+                JOptionPane.showMessageDialog(null, "Unable to render maximum average operation cost.");
+                er.printStackTrace();
+            }
+        }
     }
 
 
@@ -165,7 +204,7 @@ public class BillingManagementFrame {
         }
     }
 
-    private static class BillByDoctorListener implements ActionListener {
+    private static class BillDoctorByHighestListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {

@@ -1,8 +1,12 @@
 package GUI;
+import tables.Nurse;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by AddisonSasko on 2016-11-12.
@@ -12,13 +16,12 @@ public class PatientMonitoringFrame {
     private static int WIDTH = 1000;
     private static int HEIGHT = 650;
 
-    static JFrame monitoringFrame;
-    static JPanel mainPanel;
-    static JPanel buttonPanel;
-    static JPanel addMonitorsRelationPanel;
-    static JPanel removeMonitorsRelationPanel;
-    static JTable patientTable;
-    static JTable monitoringTable;
+    JFrame monitoringFrame;
+    JPanel mainPanel;
+    JPanel buttonPanel;
+    JPanel removeButtonPanel;
+    JTable patientTable;
+    JTable monitoringTable;
 
 
     /*
@@ -26,20 +29,134 @@ public class PatientMonitoringFrame {
      */
     private static JTextField patientID;
     private static JLabel relationDeleteLabel;
-    private static JButton removeButton;
+    //private static JButton removeButton;
 
     /*
     Buttons, text fields and labels for adding a new monitors relation
     */
     private static JTextField patientNameText;
+    private static JLabel patientNameLabel;
+    private static JButton submitButton;
+
+    private static JTextField patientNameTextRemove;
+    private static JLabel patientNameLabelRemove;
+    private static JButton removeButton;
+
+
+    private static JButton criticalPatients;
     private static JTextField noteText;
     private static JLabel nameLabel;
     private static JLabel noteLabel;
     private static JButton addButton;
 
 
-    public PatientMonitoringFrame(){
+    public PatientMonitoringFrame(JTable patientTable, JTable monitoringTable){
+        monitoringFrame = new JFrame();
+        monitoringFrame.setSize(WIDTH,HEIGHT);
+        monitoringFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        monitoringFrame.setLayout(new FlowLayout());
+        monitoringFrame.setVisible(true);
 
+        mainPanel = new JPanel();
+        monitoringFrame.add(mainPanel);
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+
+        RenderTables(patientTable, monitoringTable);
+        RenderInteractiveSpace();
+    }
+
+    // Renders the tables for the frame
+    private void RenderTables(JTable patientTable, JTable monitoringTable){
+        JPanel patientPanel = new JPanel();
+        patientPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Patients",
+                TitledBorder.CENTER,
+                TitledBorder.TOP));
+        this.patientTable = patientTable;
+        JScrollPane patientScrollPane = new JScrollPane(this.patientTable);
+        patientPanel.add(patientScrollPane, BorderLayout.WEST);
+        mainPanel.add(patientPanel);
+
+        JPanel monitoringPanel = new JPanel();
+        monitoringPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Monitors",
+                TitledBorder.CENTER,
+                TitledBorder.TOP));
+        this.monitoringTable = monitoringTable;
+        JScrollPane monitorsScrollPane = new JScrollPane(this.monitoringTable);
+        monitoringPanel.add(monitorsScrollPane, BorderLayout.EAST);
+        mainPanel.add(monitoringPanel);
+    }
+
+    // Renders the interactive space for the frame
+    private void RenderInteractiveSpace(){
+        buttonPanel = new JPanel();
+        buttonPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
+                "Add Patient To Monitors",
+                TitledBorder.CENTER,
+                TitledBorder.TOP));
+        buttonPanel.setLayout(new FlowLayout());
+        monitoringFrame.add(buttonPanel);
+
+        patientNameLabel = new JLabel("Patient ID:");
+        patientNameLabel.setBounds(10,40,80,25);
+        buttonPanel.add(patientNameLabel);
+        patientNameText = new JTextField(10);
+        patientNameText.setBounds(100,40,50,25);
+        buttonPanel.add(patientNameText);
+
+        submitButton = new JButton();
+        submitButton.setText("Add Patient");
+        submitButton.addActionListener(new AddSubmitListener());
+        buttonPanel.add(submitButton);
+
+        removeButtonPanel = new JPanel();
+        removeButtonPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
+                "Remove Patient From Monitors",
+                TitledBorder.CENTER,
+                TitledBorder.TOP));
+        removeButtonPanel.setLayout(new FlowLayout());
+        monitoringFrame.add(removeButtonPanel);
+
+        patientNameLabelRemove = new JLabel("Patient ID:");
+        patientNameLabelRemove.setBounds(10,40,80,25);
+        removeButtonPanel.add(patientNameLabelRemove);
+        patientNameTextRemove = new JTextField(10);
+        patientNameTextRemove.setBounds(100,40,50,25);
+        removeButtonPanel.add(patientNameTextRemove);
+
+        removeButton = new JButton();
+        removeButton.setText("Remove Patient");
+        removeButton.addActionListener(new AddSubmitListener());
+        removeButtonPanel.add(removeButton);
+
+        criticalPatients = new JButton();
+        criticalPatients.setText("Critical Patients");
+        criticalPatients.addActionListener(new CriticalPatientsListener());
+        monitoringFrame.add(criticalPatients);
+
+    }
+
+    // Listener for AddActivity, queries the database and refreshes the table page if it is successful
+    private static class AddSubmitListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, "You pressed the submit button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    // Listener for AddActivity, queries the database and refreshes the table page if it is successful
+    private static class CriticalPatientsListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, "You pressed the CriticalPatientsListener button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+
+
+
+        /*
         monitoringFrame = new JFrame("Patient Monitoring");
         monitoringFrame.setSize(WIDTH,HEIGHT);
         monitoringFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -139,9 +256,7 @@ public class PatientMonitoringFrame {
 
 
         monitoringFrame.setVisible(true);
-
-
-    }
+        */
 
 }
 

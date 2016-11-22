@@ -300,7 +300,10 @@ public class MainFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, "You Pressed the Patient Monitoring button.");
+
             try {
+
+
                 List<Monitors> monitors = mainConnection.getMonitors(nurse.getNurseid());
                 Iterator<Monitors> iterator = monitors.iterator();
                 Monitors monitor = null;
@@ -327,11 +330,64 @@ public class MainFrame {
                 }
                 Object mColumnNames[] = { "Patient ID"} ;
                 JTable mTable= new JTable(monitorsData, mColumnNames);
-                MedicalTable newTable = new MedicalTable(mTable);
+
+
+
+                Object patientData[][] = {
+
+                        { "Ritchie","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Welles","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Capra","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Warhol","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Breillat","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Fellini","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Carpenter","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Jodorowsky","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Christopher Nolan","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "George Lucas","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Will Smith","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Wallgreen","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Tarintino","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Michael Bay","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Joseph Levit","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                };
+                Object patientColumnNames[] = { "PatientName", "PatientID", "Sex", "Date of Birth","Ailment", "Contact Details" } ;
+                JTable patientTable = new JTable(patientData, patientColumnNames);
+
+
+
+                Object monitorsData2[][] = {
+
+                        { "Ritchie","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Welles","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Capra","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Warhol","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Breillat","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Fellini","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Carpenter","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Jodorowsky","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Christopher Nolan","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "George Lucas","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Will Smith","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Wallgreen","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Tarintino","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Michael Bay","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                        { "Joseph Levit","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
+                };
+                Object monitorsColumns[] = { "PatientName", "PatientID", "Sex", "Date of Birth","Ailment", "Contact Details" } ;
+                JTable monitorstable = new JTable(monitorsData2, monitorsColumns);
+
+
+                PatientMonitoringFrame newPatientMonitoringFrame = new PatientMonitoringFrame(patientTable,monitorstable);
+
+
+
+
             } catch(SQLException er) {
                 JOptionPane.showMessageDialog(null, "Unable to render monitors.");
                 er.printStackTrace();
             }
+
         }
     }
 
