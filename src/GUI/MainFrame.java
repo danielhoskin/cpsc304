@@ -302,8 +302,6 @@ public class MainFrame {
             JOptionPane.showMessageDialog(null, "You Pressed the Patient Monitoring button.");
 
             try {
-
-
                 List<Monitors> monitors = mainConnection.getMonitors(nurse.getNurseid());
                 Iterator<Monitors> iterator = monitors.iterator();
                 Monitors monitor = null;
@@ -315,74 +313,21 @@ public class MainFrame {
                 }
                 Object monitorsColumnNames[] = {"PatientID", "Notes"} ;
                 JTable monitorsTable = new JTable(monitorsData, monitorsColumnNames);
-                // TODO: (addison? )show all the monitors relationships with the frame above together with the new frame below (this is not complete)
-                // TODO: also need to add the buttons/listeners for adding/removing a monitors relationship
-                List<Integer> pids = Database.getInstance().monitoredByEveryNurse();
-                Object mData[][] = new Object[0][0];
-                if (!pids.isEmpty()) {
-                    mData = new Object[pids.size()][1];
-                    Iterator<Integer> m_iterator = pids.iterator();
-                    Integer pid = null;
-                    for (int r = 0; r < pids.size(); r++) {
-                        pid = m_iterator.next();
-                        mData[r][0] = pid;
-                    }
+
+                List<Patient> patients = mainConnection.getPatients();
+                Iterator<Patient> p_iterator = patients.iterator();
+                Patient patient = null;
+                Object patientData[][] = new Object[patients.size()][3];
+                for (int r = 0; r < patients.size(); r++) {
+                    patient = p_iterator.next();
+                    patientData[r][0] = patient.getName();
+                    patientData[r][1] = patient.getUserid();
                 }
-                Object mColumnNames[] = { "Patient ID"} ;
-                JTable mTable= new JTable(monitorsData, mColumnNames);
-
-
-
-                Object patientData[][] = {
-
-                        { "Ritchie","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Welles","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Capra","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Warhol","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Breillat","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Fellini","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Carpenter","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Jodorowsky","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Christopher Nolan","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "George Lucas","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Will Smith","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Wallgreen","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Tarintino","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Michael Bay","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Joseph Levit","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                };
-                Object patientColumnNames[] = { "PatientName", "PatientID", "Sex", "Date of Birth","Ailment", "Contact Details" } ;
+                Object patientColumnNames[] = { "PatientName", "PatientID"} ;
                 JTable patientTable = new JTable(patientData, patientColumnNames);
 
 
-
-                Object monitorsData2[][] = {
-
-                        { "Ritchie","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Welles","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Capra","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Warhol","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Breillat","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Fellini","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Carpenter","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Jodorowsky","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Christopher Nolan","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "George Lucas","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Will Smith","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Wallgreen","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Tarintino","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Michael Bay","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                        { "Joseph Levit","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                };
-                Object monitorsColumns[] = { "PatientName", "PatientID", "Sex", "Date of Birth","Ailment", "Contact Details" } ;
-                JTable monitorstable = new JTable(monitorsData2, monitorsColumns);
-
-
-                PatientMonitoringFrame newPatientMonitoringFrame = new PatientMonitoringFrame(patientTable,monitorstable);
-
-
-
-
+                PatientMonitoringFrame newPatientMonitoringFrame = new PatientMonitoringFrame(patientTable,monitorsTable, nurse);
             } catch(SQLException er) {
                 JOptionPane.showMessageDialog(null, "Unable to render monitors.");
                 er.printStackTrace();
@@ -404,8 +349,8 @@ public class MainFrame {
                     bill = iterator.next();
                     billData[r][0] = bill.getPatientid();
                     billData[r][1] = bill.getBillid();
-                    billData[r][2] = bill.getAmountpaid();
-                    billData[r][3] = bill.getAmountdue();
+                    billData[r][2] = bill.getAmountdue();
+                    billData[r][3] = bill.getAmountpaid();
                 }
                 JOptionPane.showMessageDialog(null, "You Pressed the Billing Management button.");
                 Object billColumnNames[] = { "Patient ID", "Bill ID", "Amount Due", "Amount Paid"} ;
@@ -415,42 +360,6 @@ public class MainFrame {
                 JOptionPane.showMessageDialog(null, "Unable to render bills.");
                 er.printStackTrace();
             }
-        }
-    }
-
-    private static class DeletionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // TODO: addison -- new frame/view part of this
-            // TODO: implement this... should be on the same frame to delete a monitors in nurse view
-            // TODO: might want to add a button for adding a monitors as well...
-            // TODO: joseph pls -- the database logic for making the object[][] and jtable
-            JOptionPane.showMessageDialog(null, "You Pressed the Delete Monitors button.");
-            Object patientData[][] = {
-
-                    { "Ritchie","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Welles","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Capra","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Warhol","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Breillat","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Fellini","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Carpenter","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Jodorowsky","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Christopher Nolan","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "George Lucas","5258932","Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Will Smith","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Wallgreen","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Tarintino","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Michael Bay","5258932", "Male","18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-                    { "Joseph Levit","5258932", "Male", "18/10/1956", "Cancer :^(" , "(778)-991-9316" },
-            };
-            Object patientColumnNames[] = { "PatientName", "PatientID", "Sex", "Date of Birth","Ailment", "Contact Details" } ;
-            JTable patientTable = new JTable(patientData, patientColumnNames);
-
-            PatientManagementFrame patientManagementView = new PatientManagementFrame(patientTable);
-
-
         }
     }
 

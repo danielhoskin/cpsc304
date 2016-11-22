@@ -1,12 +1,16 @@
 package GUI;
+import database.Database;
+import tables.Monitors;
 import tables.Nurse;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by AddisonSasko on 2016-11-12.
@@ -16,7 +20,7 @@ public class PatientMonitoringFrame {
     private static int WIDTH = 1000;
     private static int HEIGHT = 650;
 
-    JFrame monitoringFrame;
+    static JFrame monitoringFrame;
     JPanel mainPanel;
     JPanel buttonPanel;
     JPanel removeButtonPanel;
@@ -50,7 +54,7 @@ public class PatientMonitoringFrame {
     private static JButton addButton;
 
 
-    public PatientMonitoringFrame(JTable patientTable, JTable monitoringTable){
+    public PatientMonitoringFrame(JTable patientTable, JTable monitoringTable, Nurse nurse){
         monitoringFrame = new JFrame();
         monitoringFrame.setSize(WIDTH,HEIGHT);
         monitoringFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -62,7 +66,7 @@ public class PatientMonitoringFrame {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
 
         RenderTables(patientTable, monitoringTable);
-        RenderInteractiveSpace();
+        RenderInteractiveSpace(nurse, patientTable);
     }
 
     // Renders the tables for the frame
@@ -89,7 +93,7 @@ public class PatientMonitoringFrame {
     }
 
     // Renders the interactive space for the frame
-    private void RenderInteractiveSpace(){
+    private void RenderInteractiveSpace(Nurse nurse, JTable patientTable){
         buttonPanel = new JPanel();
         buttonPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
                 "Add Patient To Monitors",
@@ -107,7 +111,7 @@ public class PatientMonitoringFrame {
 
         submitButton = new JButton();
         submitButton.setText("Add Patient");
-        submitButton.addActionListener(new AddListener());
+        submitButton.addActionListener(new AddListener(nurse, patientTable));
         buttonPanel.add(submitButton);
 
         removeButtonPanel = new JPanel();
@@ -127,7 +131,7 @@ public class PatientMonitoringFrame {
 
         removeButton = new JButton();
         removeButton.setText("Remove Patient");
-        removeButton.addActionListener(new RemoveListener());
+        removeButton.addActionListener(new RemoveListener( nurse, patientTable));
         removeButtonPanel.add(removeButton);
 
         criticalPatients = new JButton();
@@ -140,18 +144,99 @@ public class PatientMonitoringFrame {
 
     // Listener for AddActivity, queries the database and refreshes the table page if it is successful
     private static class RemoveListener implements ActionListener {
+        private JTable patientTable;
+        private Nurse nurse;
+
+        RemoveListener(Nurse nurse, JTable patientTable) {
+            this.nurse = nurse;
+            this.patientTable = patientTable;
+        }
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, "You pressed the submit button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                int patientId = 0;
+                if (patientNameTextRemove.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "You must specify the patient id.");
+                    return;
+                } else {
+                    patientId = Integer.parseInt(patientNameTextRemove.getText());
+                }
+                if (Database.getInstance().deleteMonitors(nurse.getNurseid(), patientId)) { // TODO: need to add notes
+                    JOptionPane.showMessageDialog(null, "Deleted monitors successfully.");
+
+                    List<Monitors> monitors = Database.getInstance().getMonitors(nurse.getNurseid());
+                    Iterator<Monitors> iterator = monitors.iterator();
+                    Monitors monitor = null;
+                    Object monitorsData[][] = new Object[monitors.size()][2];
+                    for (int r = 0; r < monitors.size(); r++) {
+                        monitor= iterator.next();
+                        monitorsData[r][0] = monitor.getPatientid();
+                        monitorsData[r][1] = monitor.getNotes();
+                    }
+                    Object monitorsColumnNames[] = {"PatientID", "Notes"} ;
+                    JTable newTable= new JTable(monitorsData, monitorsColumnNames);
+
+                    monitoringFrame.dispose();
+                    monitoringFrame = new JFrame();
+                    new PatientMonitoringFrame(patientTable, newTable, nurse);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Unable to delete monitors.");
+                }
+            } catch (SQLException error1) {
+                JOptionPane.showMessageDialog(null, "You specified an invalid patient.");
+                error1.printStackTrace();
+            }
         }
     }
 
 
     // Listener for AddActivity, queries the database and refreshes the table page if it is successful
     private static class AddListener implements ActionListener {
+        private JTable patientTable;
+        private Nurse nurse;
+
+        AddListener(Nurse nurse, JTable patientTable) {
+            this.nurse = nurse;
+            this.patientTable = patientTable;
+        }
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, "You pressed the submit button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                int patientId = 0;
+                //String notes = notesText.getText();
+                if (patientNameText.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "You must specify the patient id.");
+                    return;
+                } else {
+                    patientId = Integer.parseInt(patientNameText.getText());
+                }
+                if (Database.getInstance().addMonitors(patientId, nurse.getNurseid(), "")) { // TODO: need to add notes
+                    JOptionPane.showMessageDialog(null, "Added monitors successfully.");
+
+                    List<Monitors> monitors = Database.getInstance().getMonitors(nurse.getNurseid());
+                    Iterator<Monitors> iterator = monitors.iterator();
+                    Monitors monitor = null;
+                    Object monitorsData[][] = new Object[monitors.size()][2];
+                    for (int r = 0; r < monitors.size(); r++) {
+                        monitor= iterator.next();
+                        monitorsData[r][0] = monitor.getPatientid();
+                        monitorsData[r][1] = monitor.getNotes();
+                    }
+                    Object monitorsColumnNames[] = {"PatientID", "Notes"} ;
+                    JTable newTable= new JTable(monitorsData, monitorsColumnNames);
+
+                    monitoringFrame.dispose();
+                    monitoringFrame = new JFrame();
+                    new PatientMonitoringFrame(patientTable, newTable, nurse);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Unable to add monitors.");
+                }
+            } catch (SQLException error) {
+                JOptionPane.showMessageDialog(null, "You specified an invalid patient.");
+                error.printStackTrace();
+            }
         }
     }
 
@@ -160,114 +245,31 @@ public class PatientMonitoringFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, "You pressed the CriticalPatientsListener button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                List<Integer> pids = Database.getInstance().monitoredByEveryNurse();
+                if (!pids.isEmpty()) {
+                    Object mData[][] = new Object[0][0];
+                    if (!pids.isEmpty()) {
+                        mData = new Object[pids.size()][1];
+                        Iterator<Integer> m_iterator = pids.iterator();
+                        Integer pid = null;
+                        for (int r = 0; r < pids.size(); r++) {
+                            pid = m_iterator.next();
+                            mData[r][0] = pid;
+                        }
+                    }
+                    Object mColumnNames[] = {"Patient ID"};
+                    JTable mTable = new JTable(mData, mColumnNames);
+                    MedicalTable newTable = new MedicalTable(mTable);
+                } else {
+                    JOptionPane.showMessageDialog(null, "No patients are in critical condition.");
+                }
+            } catch (SQLException er) {
+                JOptionPane.showMessageDialog(null, "Unable to render critical patients.");
+                er.printStackTrace();
+            }
         }
     }
-
-
-
-
-        /*
-        monitoringFrame = new JFrame("Patient Monitoring");
-        monitoringFrame.setSize(WIDTH,HEIGHT);
-        monitoringFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        monitoringFrame.setLayout(new FlowLayout());
-
-        mainPanel = new JPanel();
-        monitoringFrame.add(mainPanel);
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
-        buttonPanel = new JPanel();
-        mainPanel.add(buttonPanel);
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-
-        addMonitorsRelationPanel = new JPanel();
-        addMonitorsRelationPanel.setLayout(new FlowLayout());
-        EmptyBorder panelBorder = new EmptyBorder(10, 10, 10, 10);
-        addMonitorsRelationPanel.setBorder(panelBorder);
-        buttonPanel.add(addMonitorsRelationPanel);
-
-        nameLabel = new JLabel("Patient Name:");
-        nameLabel.setBounds(10,40,80,25);
-        addMonitorsRelationPanel.add(nameLabel);
-
-        patientNameText = new JTextField(20);
-        patientNameText.setBounds(100, 40, 50, 25);
-        addMonitorsRelationPanel.add(patientNameText);
-
-        noteLabel = new JLabel("Patient Username:");
-        noteLabel.setBounds(100, 40, 50, 25);
-        addMonitorsRelationPanel.add(noteLabel);
-
-        noteText = new JTextField(20);
-        noteText.setBounds(100, 40, 50, 25);
-        addMonitorsRelationPanel.add(noteText);
-
-        addButton = new JButton();
-        addButton.setText("Add Patient");
-        addMonitorsRelationPanel.add(addButton);
-
-        removeMonitorsRelationPanel = new JPanel();
-        removeMonitorsRelationPanel.setLayout(new FlowLayout());
-        removeMonitorsRelationPanel.setBorder(panelBorder);
-        buttonPanel.add(removeMonitorsRelationPanel);
-
-        relationDeleteLabel = new JLabel("Patient ID:");
-        relationDeleteLabel.setBounds(10,40,80,25);
-        removeMonitorsRelationPanel.add(relationDeleteLabel);
-
-        patientID = new JTextField(20);
-        patientID.setBounds(100, 40, 50, 25);
-        removeMonitorsRelationPanel.add(patientID);
-
-        removeButton = new JButton();
-        removeButton.setText("Remove Patient");
-        removeMonitorsRelationPanel.add(removeButton);
-
-
-        JPanel patientPannel = new JPanel ();
-        patientPannel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
-                "Patients",
-                TitledBorder.CENTER,
-                TitledBorder.TOP));
-
-        Object rowData[][] = {
-                { "Monday", "8:00", "20:00" },
-                { "Tuesday", "8:00", "20:00" },
-                { "Wednesday", "8:00", "20:00" },
-                { "Thursday", "8:00", "20:00" },
-                { "Friday", "8:00", "20:00" },
-                { "Saturday", "8:00", "20:00" },
-                { "Sunday", "8:00", "20:00" }};
-        Object columnNames[] = { "Day", "Available From", "Available To" } ;
-        patientTable = new JTable(rowData, columnNames);
-        JScrollPane scrollPane = new JScrollPane(patientTable);
-        patientPannel.add(scrollPane, BorderLayout.CENTER);
-        monitoringFrame.add(patientPannel);
-
-        JPanel monitorsPanel = new JPanel();
-        monitorsPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
-                "Currently Monitoring",
-                TitledBorder.CENTER,
-                TitledBorder.TOP));
-
-        Object activityData[][] = {
-                { "908543289","Nap Time", "8:00", "20:00" },
-                { "543289504","Alone Time", "8:00", "20:00" },
-                { "245049943","Walking Time", "8:00", "20:00" },
-                { "543254454","Talking Time", "8:00", "20:00" },
-                { "432543254","TV Time", "8:00", "20:00" },
-                { "543254324","Sleeping Time", "8:00", "20:00" },
-                { "432632463","Eating Time", "8:00", "20:00" },};
-        Object columnNamesData[] = { "ActivityId", "Activity", "Start Time", "End Time" } ;
-        monitoringTable = new JTable(activityData, columnNamesData);
-        JScrollPane activityScrollPane = new JScrollPane(monitoringTable);
-        monitorsPanel.add(activityScrollPane, BorderLayout.CENTER);
-        monitoringFrame.add(monitorsPanel);
-
-
-        monitoringFrame.setVisible(true);
-        */
-
 }
 
 

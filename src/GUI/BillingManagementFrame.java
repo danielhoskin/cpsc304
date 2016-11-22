@@ -2,6 +2,7 @@ package GUI;
 
 import database.Database;
 import lib.Pair;
+import tables.Has_Bill;
 
 import javax.accessibility.AccessibleAction;
 import javax.swing.*;
@@ -10,6 +11,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by AddisonSasko on 2016-11-13.
@@ -197,11 +200,22 @@ public class BillingManagementFrame {
 
            try {
                if (Database.getInstance().updateAmountPaid(Integer.parseInt(givenBillID), Float.parseFloat(givenBillAmount))) {
-                   // TODO: refresh bills after updating amount paid
-                   // TODO: Joseph pls. Something like this -- but it's not working correctly
-//                   billingManagementFrame.dispose();
-//                   billingManagementFrame = new JFrame();
-//                   new BillingManagementFrame(billingTable);
+                   List<Has_Bill> bills = Database.getInstance().getBills();
+                   Iterator<Has_Bill> iterator = bills.iterator();
+                   Has_Bill bill = null;
+                   Object billData[][] = new Object[bills.size()][4];
+                   for (int r = 0; r <bills.size(); r++) {
+                       bill = iterator.next();
+                       billData[r][0] = bill.getPatientid();
+                       billData[r][1] = bill.getBillid();
+                       billData[r][2] = bill.getAmountdue();
+                       billData[r][3] = bill.getAmountpaid();
+                   }
+                   Object billColumnNames[] = { "Patient ID", "Bill ID", "Amount Due", "Amount Paid"} ;
+                   JTable newTable = new JTable(billData, billColumnNames);
+                   billingManagementFrame.dispose();
+                   billingManagementFrame = new JFrame();
+                   new BillingManagementFrame(newTable);
                } else {
                    JOptionPane.showMessageDialog(null, "Unable to update bill: " + givenBillID, "Error", JOptionPane.INFORMATION_MESSAGE);
                }
