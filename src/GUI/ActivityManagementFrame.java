@@ -34,6 +34,7 @@ public class ActivityManagementFrame {
     static JFrame activityManagementFrame;
     JPanel mainPanel;
     JPanel activityManipulationPanel;
+    JPanel activityNotesPanel;
     JTable patientTable;
     JTable doctorTable;
     JTable nurseTable;
@@ -47,6 +48,7 @@ public class ActivityManagementFrame {
     private static JTextField startTimeText;
     private static JTextField endTimeText;
 
+    private static JLabel notes;
     private static JLabel patientNameLabel;
     private static JLabel doctorNameLabel;
     private static JLabel nurseNameLabel;
@@ -168,6 +170,20 @@ public class ActivityManagementFrame {
         submitButton.setText("Submit");
         submitButton.addActionListener(new AddActivityListener());
         activityManipulationPanel.add(submitButton);
+
+
+        activityNotesPanel = new JPanel();
+        activityNotesPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
+                "Notes",
+                TitledBorder.CENTER,
+                TitledBorder.TOP));
+        activityNotesPanel.setLayout(new FlowLayout());
+        activityManagementFrame.add(activityNotesPanel);
+
+        notes = new JLabel("The format for time is YYYY-MM-DD HH:MM. Eg. 2016-11-21 12:45");
+        notes.setBounds(10,40,80,25);
+        activityNotesPanel.add(notes);
+
 
     }
 
