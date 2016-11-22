@@ -2,9 +2,21 @@ package GUI;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
+import exceptions.ActivityException;
+import database.Database;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by AddisonSasko on 2016-11-13.
@@ -165,17 +177,16 @@ public class ActivityManagementFrame {
     private static class AddActivityListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // TODO:  pls Joseph
             String givenPatientID = patientNameText.getText();
             String givenDoctorID = doctorNameText.getText();
             String givenNurseId = nurseNameText.getText();
-
-
+            String givenStartTime = startTimeText.getText();
+            String givenEndTime = endTimeText.getText();
+            
             if (givenPatientID.equals("") && givenDoctorID.equals("")){
                 JOptionPane.showMessageDialog(null, "Please type a valid User ID and a valid Doctor ID");
                 return;
             }
-
 
             if (givenPatientID.equals("")){
                 JOptionPane.showMessageDialog(null, "Please type a valid User ID");
@@ -186,7 +197,27 @@ public class ActivityManagementFrame {
                 JOptionPane.showMessageDialog(null, "Please type a valid Doctor ID");
                 return;
             }
-        }
+            int patientid = Integer.parseInt(givenPatientID);
+            int doctorid = Integer.parseInt(givenDoctorID);
+            int nurseid;
+            
+            if( givenNurseId.equals(""))
+            	nurseid = 0;
+            else
+            	nurseid = Integer.parseInt(givenNurseId);
 
+            boolean success = false;
+            try{
+            	success = Database.getInstance().addActivity(patientid, doctorid, nurseid, givenStartTime, givenEndTime);
+            } catch (ActivityException er ) {
+            	JOptionPane.showMessageDialog(null, er.getMessage());
+                er.printStackTrace();
+            } catch (SQLException er ) {
+            	JOptionPane.showMessageDialog(null, "Unable to add Activity. Check if the id numbers are correct");
+            	er.printStackTrace();
+            }
+            if( success )
+            	JOptionPane.showMessageDialog(null, "Activity Added!");
+        }
     }
 }

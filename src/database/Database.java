@@ -3,17 +3,21 @@ package database;
 import lib.Pair;
 import lib.ThreePair;
 import tables.*;
-
 import exceptions.ActivityException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
+
+import javax.swing.JOptionPane;
 
 public class Database {
     private static Database instance = null;
@@ -491,61 +495,80 @@ public class Database {
         return false;
     }
 
-    public boolean addActivity(int patientid, int doctorid, int nurseid, Timestamp starttime, Timestamp endtime) throws SQLException, ActivityException {
+    public boolean addActivity(int patientid, int doctorid, int nurseid, String starttime_S, String endtime_S) throws SQLException, ActivityException {
     	// primary key values must not be null
-    	try{
-    		if( starttime == null || endtime == null ) {
-    			throw new ActivityException("Start and end times must be declared.");
-    		}
-    	} catch (ActivityException e) {
-    		System.out.println("Message: " + e.getMessage());
-            return false;
-    	}
+ 
+		if( starttime_S.equals("")|| endtime_S.equals(""))
+			throw new ActivityException("Start and end times must be declared.");
+
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        sdf.setTimeZone(TimeZone.getTimeZone("PST"));
+        
+        Calendar startCal = Calendar.getInstance();
+        Calendar endCal = Calendar.getInstance();
+        try {
+			startCal.setTime(sdf.parse(starttime_S));
+			endCal.setTime(sdf.parse(endtime_S));
+		} catch (ParseException e1) {
+			throw new ActivityException("Time formated incorrected. Should be 'YYYY-MM-DD HH:MM'");
+		}
+        
+        Timestamp starttime_T = new Timestamp(startCal.getTimeInMillis());
+        Timestamp endtime_T = new Timestamp(endCal.getTimeInMillis());
     	
     	// verify valid activity time frame
-    	String startdate = new SimpleDateFormat("yyyy-MM-dd").format(starttime);
-    	String enddate =  new SimpleDateFormat("yyyy-MM-dd").format(endtime);
-    	int activityStart = Integer.parseInt(new SimpleDateFormat("H").format(starttime)) * 60 + Integer.parseInt(new SimpleDateFormat("m").format(starttime)); 
-    	int activityEnd = Integer.parseInt(new SimpleDateFormat("H").format(endtime)) * 60 + Integer.parseInt(new SimpleDateFormat("m").format(endtime));
-    	try {
-    		if( !(startdate.equals(enddate)) ){
-    			throw new ActivityException("Cannot have an activity spanning more than 1 day.");
-    		}
-    		if( activityStart >= activityEnd ){
-    			throw new ActivityException("Cannot have an activity with invalid duration.");
-    		}
-        } catch (ActivityException e) {
-            System.out.println("Message: " + e.getMessage());
-            return false;
-        }
+    	String startdate = new SimpleDateFormat("yyyy-MM-dd").format(starttime_T);
+    	String enddate =  new SimpleDateFormat("yyyy-MM-dd").format(endtime_T);
+    	int activityStart = Integer.parseInt(new SimpleDateFormat("H").format(starttime_T)) * 60 + Integer.parseInt(new SimpleDateFormat("m").format(starttime_T)); 
+    	int activityEnd = Integer.parseInt(new SimpleDateFormat("H").format(endtime_T)) * 60 + Integer.parseInt(new SimpleDateFormat("m").format(endtime_T));
+    	
+		if( !(startdate.equals(enddate)) )
+			throw new ActivityException("Cannot have an activity spanning more than 1 day.");
+
+		if( activityStart >= activityEnd )
+			throw new ActivityException("Cannot have an activity with invalid duration.");
+
     	
     	boolean patientCanAdd = false, doctorCanAdd = false, nurseCanAdd = false;
     	
-    	patientCanAdd = this.instance.canAddActivity( "Patient", patientid, starttime, endtime, startdate, activityStart, activityEnd );
-        doctorCanAdd = this.instance.canAddActivity( "Doctor", doctorid, starttime, endtime, startdate, activityStart, activityEnd );
+    	patientCanAdd = this.instance.canAddActivity( "Patient", patientid, starttime_T, endtime_T, startdate, activityStart, activityEnd );
+        doctorCanAdd = this.instance.canAddActivity( "Doctor", doctorid, starttime_T, endtime_T, startdate, activityStart, activityEnd );
     	
         // if nurse not required for activity, set to true
     	if( nurseid == 0 ){
     		nurseCanAdd = true;
     	} else {
-    		nurseCanAdd = this.instance.canAddActivity( "Nurse", nurseid, starttime, endtime, startdate, activityStart, activityEnd );
+    		nurseCanAdd = this.instance.canAddActivity( "Nurse", nurseid, starttime_T, endtime_T, startdate, activityStart, activityEnd );
     	}
         
         if( patientCanAdd && doctorCanAdd && nurseCanAdd ){
         	Statement stmt = connection.createStatement();
         	String query;
         	if( nurseid == 0 )
-        		query = "insert into has_activity values(seq_activityid.nextval, " + patientid + "," + doctorid + ", null, '" + starttime + "','" + endtime + "')";
+        		query = "insert into has_activity values(seq_activityid.nextval, " + patientid + "," + doctorid + ", null, '" + starttime_T + "','" + endtime_T + "')";
         	else
-        		query = "insert into has_activity values(seq_activityid.nextval, " + patientid + "," + doctorid + "," + nurseid + ",'" + starttime + "','" + endtime + "')";
+        		query = "insert into has_activity values(seq_activityid.nextval, " + patientid + "," + doctorid + "," + nurseid + ",'" + starttime_T + "','" + endtime_T + "')";
         	return stmt.executeUpdate(query) == 1;
         }
     	return false;
     }
     
     public boolean canAddActivity( String usertype, int id, Timestamp starttime, Timestamp endtime, String date, int activityStart, int activityEnd ) throws SQLException, ActivityException {
+        
+        if( usertype.equals("Patient")){
+        	if( !this.instance.isPatient(id))
+        	   	throw new ActivityException("Patient ID is incorrect");
+        } else if( usertype.equals("Doctor")){
+        	if( !this.instance.isDoctor(id))
+        		throw new ActivityException("Doctor ID is incorrect");
+        } else if( usertype.equals("Nurse")){
+        	if( !this.instance.isNurse(id))
+        		throw new ActivityException("Nurse ID is incorrect");
+        }
+    	
     	Statement stmt = connection.createStatement();
         String query;
+
         
         // see if there are any special schedules
         String startdayofweeknum = new SimpleDateFormat("u").format(starttime);	// returns "1" to "7", 1 = Monday, 2 = Tuesday...
@@ -578,17 +601,12 @@ public class Database {
 			dayid = Integer.parseInt(startdayofweeknum);
         }
         // check if activity is within this user's schedule
-        try{
-        	if( scheduleStart == scheduleEnd )
-        		throw new ActivityException(usertype + " is unavailable that day.");
-        	else if( activityStart < scheduleStart )
-        		throw new ActivityException(usertype + " is not available that early.");
-        	else if( scheduleEnd < activityEnd )
-        		throw new ActivityException(usertype + " is not available that late.");
-        } catch (ActivityException e ){
-            System.out.println("Message: " + e.getMessage());
-            return false;
-        }
+    	if( scheduleStart == scheduleEnd )
+    		throw new ActivityException(usertype + " is unavailable that day.");
+    	else if( activityStart < scheduleStart )
+    		throw new ActivityException(usertype + " is not available that early.");
+    	else if( scheduleEnd < activityEnd )
+    		throw new ActivityException(usertype + " is not available that late.");
         
         // compare against every other activity of this user in this day
         int existingActivityStart, existingActivityEnd;
@@ -599,19 +617,15 @@ public class Database {
         							Integer.parseInt(new SimpleDateFormat("m").format(rs.getTimestamp("starttime")));
         	existingActivityEnd = 	Integer.parseInt(new SimpleDateFormat("H").format(rs.getTimestamp("endtime"))) * 60 +
 									Integer.parseInt(new SimpleDateFormat("m").format(rs.getTimestamp("endtime")));
-        	try{
-        		if( activityStart >= existingActivityStart && activityStart < existingActivityEnd )
-        			throw new ActivityException(usertype+"AddActivity conflict: this activity begins during another activity.");
-        		if( activityEnd > existingActivityStart && activityEnd <= existingActivityEnd )
-        			throw new ActivityException(usertype+"AddActivity conflict: this activity ends during another activity.");
-        		if( existingActivityStart >= activityStart && existingActivityStart < activityEnd )
-        			throw new ActivityException(usertype+"AddActivity conflict: another activity begins during your activity.");
-        		if( existingActivityEnd > activityStart && existingActivityEnd <= activityEnd )
-        			throw new ActivityException(usertype+"AddActivity conflict: anoterh activity ends during your activity.");
-        	} catch (ActivityException e){
-                System.out.println("Message: " + e.getMessage());
-                return false;
-        	}
+    		
+        	if( activityStart >= existingActivityStart && activityStart < existingActivityEnd )
+    			throw new ActivityException(usertype+"AddActivity conflict: this activity begins during another activity.");
+    		if( activityEnd > existingActivityStart && activityEnd <= existingActivityEnd )
+    			throw new ActivityException(usertype+"AddActivity conflict: this activity ends during another activity.");
+    		if( existingActivityStart >= activityStart && existingActivityStart < activityEnd )
+    			throw new ActivityException(usertype+"AddActivity conflict: another activity begins during your activity.");
+    		if( existingActivityEnd > activityStart && existingActivityEnd <= activityEnd )
+    			throw new ActivityException(usertype+"AddActivity conflict: anoterh activity ends during your activity.");
         }
         return true;
     }
@@ -990,11 +1004,11 @@ public class Database {
 
     public static void main(String[] args) {
         Database db = Database.getInstance();
-        try {
+//        try {
         	// y - m - d - h - m - s - ns
-        	Timestamp starttime = new Timestamp(1479329280000L);
-        	Timestamp endtime = new Timestamp(1479329380000L);
-        	System.out.println(db.addActivity( 3, 8, 17, starttime, endtime ));
+//        	Timestamp starttime = new Timestamp(1479329280000L);
+//        	Timestamp endtime = new Timestamp(1479329380000L);
+//        	System.out.println(db.addActivity( 3, 8, 17, starttime, endtime ));
         	/*
             List<Patient> patients = db.viewPatients(26, "m", "filler");
             patients = db.viewPatients(-1, "mf", "");
@@ -1045,9 +1059,9 @@ public class Database {
             db.getReceptionist(14);
             db.getDoctorWithMaximumAverageOperationCost();
             db.getDoctorWithMinimumAverageOperationCost();*/
-        } catch (SQLException | ActivityException e) {
-            System.out.println("Message: " + e.getMessage());
-            System.exit(-1);
-        }
+//        } catch (SQLException | ActivityException e) {
+//            System.out.println("Message: " + e.getMessage());
+//            System.exit(-1);
+//        }
     }
 }
