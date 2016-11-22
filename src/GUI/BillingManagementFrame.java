@@ -110,6 +110,7 @@ public class BillingManagementFrame {
         billingManipulationPanel.add(submitButton);
 
 
+        /*
         billingArrangeByMaximumPanel = new JPanel();
         billingArrangeByMaximumPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
                 "Bill Averages By Doctor",
@@ -117,12 +118,16 @@ public class BillingManagementFrame {
                 TitledBorder.TOP));
         billingArrangeByMaximumPanel.setLayout(new FlowLayout());
         billingManagementFrame.add(billingArrangeByMaximumPanel);
+        */
+
 
         arrangeByMaximumButton = new JButton();
-        arrangeByMaximumButton.setText("Submit");
+        arrangeByMaximumButton.setText("Maximum Bills");
         arrangeByMaximumButton.addActionListener(new BillDoctorByHighestListener());
-        billingArrangeByMinimumPanel.add(arrangeByMaximumButton);
+        billingManipulationPanel.add(arrangeByMaximumButton);
 
+
+        /*
 
         billingArrangeByMinimumPanel = new JPanel();
         billingArrangeByMinimumPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
@@ -131,11 +136,13 @@ public class BillingManagementFrame {
                 TitledBorder.TOP));
         billingArrangeByMinimumPanel.setLayout(new FlowLayout());
         billingManagementFrame.add(billingArrangeByMinimumPanel);
+        */
 
         arrangeByMinimumButton = new JButton();
-        arrangeByMinimumButton.setText("Submit");
+        arrangeByMinimumButton.setText("Minimum Bills");
         arrangeByMinimumButton.addActionListener(new BillByDoctorLowestListener());
-        billingArrangeByMinimumPanel.add(arrangeByMinimumButton);
+        billingManipulationPanel.add(arrangeByMinimumButton);
+
 
     }
 
