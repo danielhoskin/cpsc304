@@ -175,7 +175,7 @@ public class Database {
            query =  "insert into monitors values(" + patientid + ", " + nurseid + ", null)";
            
         } else {
-           query = "insert into monitors values(" + patientid + ", " + nurseid + ", '" + notes + "')";
+            query = "insert into monitors values(" + patientid + ", " + nurseid + ", '" + notes + "')";
         }
         int result = stmt.executeUpdate(query);
         return result == 1;

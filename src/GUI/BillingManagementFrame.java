@@ -130,15 +130,15 @@ public class BillingManagementFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                Pair<Integer, Float> pair = Database.getInstance().getDoctorWithMaximumAverageOperationCost();
+                Pair<Integer, Float> pair = Database.getInstance().getDoctorWithMinimumAverageOperationCost();
                 Object doctorData[][] = new Object[1][2];
                 doctorData[0][0] = pair.getLeft();
                 doctorData[0][1] = pair.getRight();
-                Object billColumnNames[] = { "Doctor ID", "Maximum Average Operation Cost"} ;
+                Object billColumnNames[] = { "Doctor ID", "Minimum Average Operation Cost"} ;
                 JTable billTable = new JTable(doctorData, billColumnNames);
                 MedicalTable newTable = new MedicalTable(billTable);
             } catch(SQLException er) {
-                JOptionPane.showMessageDialog(null, "Unable to render maximum average operation cost.");
+                JOptionPane.showMessageDialog(null, "Unable to render minimum average operation cost.");
                 er.printStackTrace();
             }
         }

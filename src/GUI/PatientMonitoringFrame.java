@@ -213,14 +213,14 @@ public class PatientMonitoringFrame {
             JOptionPane.showMessageDialog(null, "You pressed the submit button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
             try {
                 int patientId = 0;
-                //String notes = notesText.getText();
+                String notes = noteText.getText();
                 if (patientNameText.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "You must specify the patient id.");
                     return;
                 } else {
                     patientId = Integer.parseInt(patientNameText.getText());
                 }
-                if (Database.getInstance().addMonitors(patientId, nurse.getNurseid(), "")) { // TODO: need to add notes
+                if (Database.getInstance().addMonitors(patientId, nurse.getNurseid(), notes)) {
                     JOptionPane.showMessageDialog(null, "Added monitors successfully.");
 
                     List<Monitors> monitors = Database.getInstance().getMonitors(nurse.getNurseid());
