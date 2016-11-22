@@ -107,7 +107,7 @@ public class PatientMonitoringFrame {
 
         submitButton = new JButton();
         submitButton.setText("Add Patient");
-        submitButton.addActionListener(new AddSubmitListener());
+        submitButton.addActionListener(new AddListener());
         buttonPanel.add(submitButton);
 
         removeButtonPanel = new JPanel();
@@ -127,7 +127,7 @@ public class PatientMonitoringFrame {
 
         removeButton = new JButton();
         removeButton.setText("Remove Patient");
-        removeButton.addActionListener(new AddSubmitListener());
+        removeButton.addActionListener(new RemoveListener());
         removeButtonPanel.add(removeButton);
 
         criticalPatients = new JButton();
@@ -137,8 +137,18 @@ public class PatientMonitoringFrame {
 
     }
 
+
     // Listener for AddActivity, queries the database and refreshes the table page if it is successful
-    private static class AddSubmitListener implements ActionListener {
+    private static class RemoveListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, "You pressed the submit button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+
+    // Listener for AddActivity, queries the database and refreshes the table page if it is successful
+    private static class AddListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, "You pressed the submit button", "Submit Button", JOptionPane.INFORMATION_MESSAGE);
