@@ -142,7 +142,24 @@ public class BillingManagementFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            try {
+                List<Pair<Integer, Float>> pairs = Database.getInstance().paidTheHighestBill();
 
+                Iterator<Pair<Integer, Float>> iterator = pairs.iterator();
+                Pair<Integer, Float> pair = null;
+                Object patientData[][] = new Object[pairs.size()][2];
+                Object patientColumnNames[] = { "Patient ID", "Max Bill Cost"} ;
+                for (int r = 0; r < pairs.size(); r++) {
+                    pair = iterator.next();
+                    patientData[r][0] = pair.getLeft();
+                    patientData[r][1] = pair.getRight();
+                }
+                JTable patientTable = new JTable(patientData, patientColumnNames);
+                MedicalTable newTable = new MedicalTable(patientTable);
+            } catch(SQLException er) {
+                JOptionPane.showMessageDialog(null, "Unable to render maximum average bill.");
+                er.printStackTrace();
+            }
         }
     }
 
@@ -150,7 +167,24 @@ public class BillingManagementFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            try {
+                List<Pair<Integer, Float>> pairs = Database.getInstance().paidTheLowestBill();
 
+                Iterator<Pair<Integer, Float>> iterator = pairs.iterator();
+                Pair<Integer, Float> pair = null;
+                Object patientData[][] = new Object[pairs.size()][2];
+                Object patientColumnNames[] = { "Patient ID", "Min Bill Cost"} ;
+                for (int r = 0; r < pairs.size(); r++) {
+                    pair = iterator.next();
+                    patientData[r][0] = pair.getLeft();
+                    patientData[r][1] = pair.getRight();
+                }
+                JTable patientTable = new JTable(patientData, patientColumnNames);
+                MedicalTable newTable = new MedicalTable(patientTable);
+            } catch(SQLException er) {
+                JOptionPane.showMessageDialog(null, "Unable to render minumum average bill.");
+                er.printStackTrace();
+            }
         }
     }
 
