@@ -45,6 +45,8 @@ public class BillingManagementFrame {
     private static JButton arrangeByMaximumButton;
     private static JButton arrangeByMinimumButton;
 
+    private static JButton findMaxPayingPatientButton;
+    private static JButton findMinPayingPatientButton;
 
     private static JButton arrangeBySize;
     private static JButton arrangeBySmallest;
@@ -113,16 +115,43 @@ public class BillingManagementFrame {
         billingManipulationPanel.add(submitButton);
 
         arrangeByMaximumButton = new JButton();
-        arrangeByMaximumButton.setText("Maximum Bills");
+        arrangeByMaximumButton.setText("Max Doctor");
         arrangeByMaximumButton.addActionListener(new BillDoctorByHighestListener());
         billingManipulationPanel.add(arrangeByMaximumButton);
 
         arrangeByMinimumButton = new JButton();
-        arrangeByMinimumButton.setText("Minimum Bills");
+        arrangeByMinimumButton.setText("Min Doctor");
         arrangeByMinimumButton.addActionListener(new BillByDoctorLowestListener());
         billingManipulationPanel.add(arrangeByMinimumButton);
 
+        findMaxPayingPatientButton = new JButton();
+        findMaxPayingPatientButton.setText("Max Paying Patient");
+        findMaxPayingPatientButton.addActionListener(new MaximumPayingPatientListener());
+        billingManipulationPanel.add(findMaxPayingPatientButton);
 
+        findMinPayingPatientButton = new JButton();
+        findMinPayingPatientButton.setText("Min Paying Patient");
+        findMinPayingPatientButton.addActionListener(new MinimumPayingPatientListener());
+        billingManipulationPanel.add(findMinPayingPatientButton);
+
+
+    }
+
+
+    private static class MaximumPayingPatientListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    private static class MinimumPayingPatientListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
     }
 
     private static class BillByDoctorLowestListener implements ActionListener{
