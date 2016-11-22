@@ -109,10 +109,18 @@ public class PatientMonitoringFrame {
         patientNameText.setBounds(100,40,50,25);
         buttonPanel.add(patientNameText);
 
+        noteLabel = new JLabel("Notes");
+        noteLabel.setBounds(10,40,80,25);
+        buttonPanel.add(noteLabel);
+        noteText = new JTextField(10);
+        noteText.setBounds(100,40,50,25);
+        buttonPanel.add(noteText);
+
         submitButton = new JButton();
         submitButton.setText("Add Patient");
         submitButton.addActionListener(new AddListener(nurse, patientTable));
         buttonPanel.add(submitButton);
+
 
         removeButtonPanel = new JPanel();
         removeButtonPanel.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),
